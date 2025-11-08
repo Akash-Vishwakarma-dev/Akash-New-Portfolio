@@ -1,0 +1,102 @@
+import { NextRequest } from "next/server";
+import { prisma } from "@/lib/db";
+import { successResponse, errorResponse, handleApiError, parseRequestBody } from "@/lib/api-utils";
+import { checkRateLimit, getClientIdentifier, adminRateLimit } from "@/lib/rate-limit";
+import { updateProjectSchema } from "@/lib/validations";
+
+/**
+ * PATCH /api/admin/projects/[id]
+ * Update a project (admin only)
+ */
+export async function PATCH(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  try {
+    // Rate limiting
+    const identifier = getClientIdentifier(request);
+    const rateLimitResult = await checkRateLimit(adminRateLimit, identifier);
+    if (!rateLimitResult.success) {
+      return rateLimitResult.response;
+    }
+
+    const { id } = params;
+
+    // Parse and validate request body
+    const parseResult = await parseRequestBody(request, updateProjectSchema);
+    if (!parseResult.success) {
+      return parseResult.response;
+    }
+
+    const { tagIds, ...projectData } = parseResult.data;
+
+    // Check if project exists
+    const existing = await prisma.project.findUnique({
+      where: { id },
+    });
+
+    if (!existing) {
+      return errorResponse("Project not found", 404, "NOT_FOUND");
+    }
+
+    // Check if new slug conflicts
+    if (projectData.slug && projectData.slug !== existing.slug) {
+      const slugExists = await prisma.project.findUnique({
+        where: { slug: projectData.slug },
+      });
+
+      if (slugExists) {
+        return errorResponse("A project with this slug already exists", 409, "CONFLICT");
+      }
+    }
+
+    // Update project
+    const project = await prisma.project.update({
+      where: { id },
+      data: {
+        ...projectData,
+        ...(tagIds && {
+          tags: {
+            set: tagIds.map((id) => ({ id })),
+          },
+        }),
+      },
+      include: {
+        tags: true,
+      },
+    });
+
+    return successResponse(project);
+  } catch (error) {
+    return handleApiError(error);
+  }
+}
+
+/**
+ * DELETE /api/admin/projects/[id]
+ * Delete a project (admin only)
+ */
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  try {
+    // Rate limiting
+    const identifier = getClientIdentifier(request);
+    const rateLimitResult = await checkRateLimit(adminRateLimit, identifier);
+    if (!rateLimitResult.success) {
+      return rateLimitResult.response;
+    }
+
+    const { id } = params;
+
+    // Delete project
+    await prisma.project.delete({
+      where: { id },
+    });
+
+    return successResponse({ message: "Project deleted successfully" });
+  } catch (error) {
+    return handleApiError(error);
+  }
+}

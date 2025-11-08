@@ -1,0 +1,258 @@
+// Prisma schema for MongoDB
+// Portfolio Backend - MongoDB Version
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================
+// AUTHENTICATION & USER MANAGEMENT
+// ============================================
+
+enum UserRole {
+  USER
+  ADMIN
+}
+
+model User {
+  id            String    @id @default(auto()) @map("_id") @db.ObjectId
+  name          String?
+  email         String    @unique
+  emailVerified DateTime?
+  image         String?
+  role          UserRole  @default(USER)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  accounts         Account[]
+  sessions         Session[]
+  themePreferences ThemePreference[]
+
+  @@map("users")
+}
+
+model Account {
+  id                String  @id @default(auto()) @map("_id") @db.ObjectId
+  userId            String  @db.ObjectId
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+model Session {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  sessionToken String   @unique
+  userId       String   @db.ObjectId
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model VerificationToken {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+  @@map("verification_tokens")
+}
+
+// ============================================
+// PORTFOLIO ENTITIES
+// ============================================
+
+model Project {
+  id              String   @id @default(auto()) @map("_id") @db.ObjectId
+  slug            String   @unique
+  title           String
+  summary         String
+  description     String
+  stack           String[] // Array of technologies used
+  repoUrl         String?
+  liveUrl         String?
+  paperUrl        String? // For research-based projects
+  coverImageUrl   String?
+  metrics         Json? // { stars: 100, forks: 20, views: 1000 }
+  published       Boolean  @default(false)
+  featured        Boolean  @default(false)
+  displayOrder    Int      @default(0)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  tagIds         String[]     @db.ObjectId
+  tags           Tag[]        @relation(fields: [tagIds], references: [id])
+  mediaItems     MediaItem[]
+
+  @@map("projects")
+}
+
+model BlogPost {
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId
+  slug          String   @unique
+  title         String
+  excerpt       String
+  content       String // MDX content
+  coverImageUrl String?
+  published     Boolean  @default(false)
+  featured      Boolean  @default(false)
+  viewCount     Int      @default(0)
+  readTime      Int? // minutes
+  publishedAt   DateTime?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  tagIds String[] @db.ObjectId
+  tags   Tag[]    @relation(fields: [tagIds], references: [id])
+
+  @@map("blog_posts")
+}
+
+model Research {
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId
+  slug          String   @unique
+  title         String
+  summary       String
+  description   String
+  authors       String[] // Array of co-authors
+  paperUrl      String?
+  publishedIn   String? // Conference/Journal name
+  publishedAt   DateTime?
+  coverImageUrl String?
+  published     Boolean  @default(false)
+  featured      Boolean  @default(false)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  tagIds String[] @db.ObjectId
+  tags   Tag[]    @relation(fields: [tagIds], references: [id])
+
+  @@map("research")
+}
+
+model Certification {
+  id            String    @id @default(auto()) @map("_id") @db.ObjectId
+  slug          String    @unique
+  title         String
+  issuer        String
+  credentialId  String?
+  credentialUrl String?
+  issuedAt      DateTime
+  expiresAt     DateTime?
+  description   String?
+  skills        String[] // Array of skills covered
+  badgeUrl      String?
+  published     Boolean   @default(false)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@map("certifications")
+}
+
+model Achievement {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  slug        String   @unique
+  title       String
+  description String
+  category    String // e.g., "Hackathon", "Award", "Publication"
+  achievedAt  DateTime
+  iconUrl     String?
+  url         String? // Link to proof/details
+  published   Boolean  @default(false)
+  featured    Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("achievements")
+}
+
+model MediaItem {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  projectId   String?  @db.ObjectId
+  url         String
+  type        String // "image", "video", "demo"
+  caption     String?
+  displayOrder Int     @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  project Project? @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@map("media_items")
+}
+
+model Resume {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  version     String   @unique // e.g., "v1.0", "2024-fall"
+  fileUrl     String
+  fileName    String
+  isActive    Boolean  @default(false) // Only one active at a time
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("resumes")
+}
+
+model Tag {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  name      String   @unique
+  slug      String   @unique
+  color     String? // Hex color for UI
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  projectIds  String[]     @db.ObjectId
+  projects    Project[]    @relation(fields: [projectIds], references: [id])
+  blogPostIds String[]     @db.ObjectId
+  blogPosts   BlogPost[]   @relation(fields: [blogPostIds], references: [id])
+  researchIds String[]     @db.ObjectId
+  research    Research[]   @relation(fields: [researchIds], references: [id])
+
+  @@map("tags")
+}
+
+model ThemePreference {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String   @db.ObjectId
+  theme     String   @default("system") // "light", "dark", "system"
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId])
+  @@map("theme_preferences")
+}
+
+model LottieAnimation {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  name        String   @unique
+  slug        String   @unique
+  jsonUrl     String
+  description String?
+  category    String? // e.g., "hero", "loading", "success"
+  published   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("lottie_animations")
+}
