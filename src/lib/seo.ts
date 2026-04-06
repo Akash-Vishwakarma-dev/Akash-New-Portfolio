@@ -1,32 +1,32 @@
 import type { NextSeoProps } from "next-seo";
 
 const config: NextSeoProps = {
-  defaultTitle: "Abhay Soni | Full Stack Developer & AI Engineer",
-  titleTemplate: "%s | Abhay Soni",
+  defaultTitle: "Akash Vishwakarma | Full Stack Developer & AI Engineer",
+  titleTemplate: "%s | Akash Vishwakarma",
   description:
-    "Portfolio of Abhay Soni - Full Stack Developer, AI/ML Engineer, and Open Source Contributor. Explore projects, blog posts, research, and achievements.",
-  canonical: "https://abhaysoni.dev",
+    "Portfolio of Akash Vishwakarma - Full Stack Developer, AI/ML Engineer, and Open Source Contributor. Explore projects, blog posts, research, and achievements.",
+  canonical: "https://akash-portfolio-b1529.web.app/",
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "https://abhaysoni.dev",
-    siteName: "Abhay Soni Portfolio",
-    title: "Abhay Soni | Full Stack Developer & AI Engineer",
+    url: "https://akash-portfolio-b1529.web.app/",
+    siteName: "Akash Vishwakarma Portfolio",
+    title: "Akash Vishwakarma | Full Stack Developer & AI Engineer",
     description:
       "Portfolio showcasing projects, blog posts, research papers, and professional achievements in software development and AI/ML.",
     images: [
       {
-        url: "https://abhaysoni.dev/og-image.png",
+        url: null,
         width: 1200,
         height: 630,
-        alt: "Abhay Soni Portfolio",
+        alt: "Akash Vishwakarma Portfolio",
         type: "image/png",
       },
     ],
   },
   twitter: {
-    handle: "@abhaysoni",
-    site: "@abhaysoni",
+    handle: "@Er_Akash__",
+    site: "@Er_Akash__",
     cardType: "summary_large_image",
   },
   additionalMetaTags: [
@@ -41,7 +41,7 @@ const config: NextSeoProps = {
     },
     {
       name: "author",
-      content: "Abhay Soni",
+      content: "Akash Vishwakarma",
     },
     {
       httpEquiv: "x-ua-compatible",
@@ -79,11 +79,11 @@ export function getProjectSEO(project: {
   return {
     title: project.title,
     description: project.summary,
-    canonical: `https://abhaysoni.dev/projects/${project.slug}`,
+    canonical: null,
     openGraph: {
       title: project.title,
       description: project.summary,
-      url: `https://abhaysoni.dev/projects/${project.slug}`,
+      url: null,
       type: "article",
       images: project.coverImage
         ? [
@@ -113,16 +113,16 @@ export function getBlogSEO(post: {
   return {
     title: post.title,
     description: post.excerpt,
-    canonical: `https://abhaysoni.dev/blog/${post.slug}`,
+    canonical: null,
     openGraph: {
       title: post.title,
       description: post.excerpt,
-      url: `https://abhaysoni.dev/blog/${post.slug}`,
+      url: null,
       type: "article",
       article: {
         publishedTime: post.createdAt,
         modifiedTime: post.updatedAt,
-        authors: ["Abhay Soni"],
+        authors: ["Akash Vishwakarma"],
       },
       images: post.coverImage
         ? [

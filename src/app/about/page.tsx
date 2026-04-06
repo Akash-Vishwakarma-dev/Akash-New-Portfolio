@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import Image from "next/image";
 import Link from "next/link";
 import { Code2, Zap, Users, Target } from "lucide-react";
 import { Section } from "@/components/Section";
@@ -66,8 +67,8 @@ export default function AboutPage() {
               </h1>
               <div className="space-y-4 text-lg text-muted-foreground">
                 <p>
-                  Hi, I'm <span className="font-semibold text-foreground">Abhay Soni</span>, 
-                  a passionate software engineer and researcher specializing in artificial 
+                  Hi, I'm <span className="font-semibold text-foreground">Akash Vishwakarma</span>, 
+                  a passionate software engineer specializing in artificial 
                   intelligence and machine learning.
                 </p>
                 <p>
@@ -104,13 +105,14 @@ export default function AboutPage() {
             >
               <ParallaxContainer speed={0.2}>
                 <div className="relative aspect-square overflow-hidden rounded-2xl bg-gradient-to-br from-primary/20 to-primary/5">
-                  {/* Placeholder - Replace with actual image */}
-                  <div className="flex h-full items-center justify-center">
-                    <div className="text-center">
-                      <div className="mb-4 text-6xl">👨‍💻</div>
-                      <p className="text-muted-foreground">Professional Photo</p>
-                    </div>
-                  </div>
+                  <Image
+                    src="/images/Photo.jpg"
+                    alt="Akash Vishwakarma profile photo"
+                    fill
+                    priority
+                    sizes="(min-width: 1024px) 40vw, 80vw"
+                    className="object-cover"
+                  />
                 </div>
               </ParallaxContainer>
             </motion.div>
@@ -213,17 +215,17 @@ export default function AboutPage() {
             <div className="space-y-8 text-left">
               {[
                 {
-                  year: "2024",
+                  year: "2026",
                   title: "Full-Stack Developer & AI Researcher",
                   description: "Building production-scale AI applications and contributing to research in NLP and Computer Vision.",
                 },
                 {
-                  year: "2022",
+                  year: "2026",
                   title: "Software Engineer",
                   description: "Developed web applications and microservices for enterprise clients.",
                 },
                 {
-                  year: "2020",
+                  year: "2026",
                   title: "Computer Science Graduate",
                   description: "Earned degree with specialization in Artificial Intelligence and Machine Learning.",
                 },

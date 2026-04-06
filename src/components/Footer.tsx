@@ -7,10 +7,10 @@ import { scrollTo } from "./SmoothScrollProvider";
 import { Button } from "./ui/button";
 
 const socialLinks = [
-  { href: "https://github.com/abhaysoni007", icon: Github, label: "GitHub" },
-  { href: "https://linkedin.com/in/abhaysoni", icon: Linkedin, label: "LinkedIn" },
-  { href: "https://twitter.com/abhaysoni", icon: Twitter, label: "Twitter" },
-  { href: "mailto:yuvrajsoni411@gmail.com", icon: Mail, label: "Email" },
+  { href: "https://github.com/Akash-Vishwakarma-dev", icon: Github, label: "GitHub" },
+  { href: "https://linkedin.com/in/vishwakarma-akash", icon: Linkedin, label: "LinkedIn" },
+  { href: "https://twitter.com/Er_Akash__", icon: Twitter, label: "Twitter" },
+  { href: "mailto:akashvis42@gmail.com", icon: Mail, label: "Email" },
 ];
 
 const footerLinks = [
@@ -41,7 +41,7 @@ export function Footer() {
         <div className="grid gap-8 md:grid-cols-3">
           {/* Brand */}
           <div>
-            <h3 className="mb-4 text-xl font-bold">Abhay Soni</h3>
+            <h3 className="mb-4 text-xl font-bold">Akash Vishwakarma</h3>
             <p className="text-sm text-muted-foreground">
               Full Stack Developer & AI Engineer passionate about building
               innovative solutions and contributing to open source.
@@ -125,7 +125,7 @@ export function Footer() {
           </div>
 
           <p className="text-sm text-muted-foreground">
-            © {currentYear} Abhay Soni. All rights reserved. Built with Next.js,
+            © {currentYear} Akash Vishwakarma. All rights reserved. Built with Next.js,
             TypeScript, and Tailwind CSS.
           </p>
         </div>

@@ -1,4 +1,4 @@
-# Abhay Soni - Portfolio Frontend
+# Akash Vishwakarma - Portfolio Frontend
 
 > A cutting-edge, production-ready portfolio website built with Next.js 14, featuring advanced cursor interactions, scroll-linked SVG morphing, Lottie animations, and seamless dark/light mode theming.
 
@@ -342,7 +342,7 @@ MIT License - feel free to use this as a template for your own portfolio!
 
 ---
 
-**Built with ❤️ by Abhay Soni**
+**Built with ❤️ by Akash Vishwakarma**
 
 Portfolio: [abhaysoni.dev](https://abhaysoni.dev)  
 GitHub: [@abhaysoni007](https://github.com/abhaysoni007)  

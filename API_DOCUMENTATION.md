@@ -275,7 +275,7 @@ GET /api/research
       "pdfUrl": "https://...",
       "doi": "10.1000/...",
       "bibtex": "@inproceedings{...}",
-      "authors": ["Abhay Soni", "..."],
+      "authors": ["Akash Vishwakarma", "..."],
       "keywords": ["NAS", "Deep Learning"],
       "citedBy": 15,
       "createdAt": "2024-11-01T00:00:00Z"

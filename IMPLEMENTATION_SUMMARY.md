@@ -332,7 +332,7 @@ You can deploy it as-is or extend it with additional features based on your need
 
 ---
 
-**Built for**: Abhay Soni  
+**Built for**: Akash Vishwakarma  
 **Purpose**: Professional Developer Portfolio Platform  
 **Status**: ✅ Production Ready  
 **Last Updated**: November 8, 2025

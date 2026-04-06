@@ -55,7 +55,7 @@ export function Navbar() {
           className="text-2xl font-bold tracking-tight text-foreground"
         >
           <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-            AS
+            AV
           </span>
         </MagneticButton>
 

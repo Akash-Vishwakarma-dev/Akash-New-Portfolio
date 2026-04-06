@@ -216,7 +216,7 @@ export default function HomePage() {
                     backgroundSize: "200% auto",
                   }}
                 >
-                  Abhay Soni
+                  Akash Vishwakarma
                   <motion.span
                     className="absolute -bottom-2 left-0 h-1 w-full bg-gradient-to-r from-primary via-accent to-primary"
                     initial={{ scaleX: 0 }}
@@ -307,7 +307,7 @@ export default function HomePage() {
                 <div className="flex gap-3">
                   <MagneticButton intensity={0.5}>
                     <a
-                      href="https://github.com/abhaysoni007"
+                      href="https://github.com/Akash-Vishwakarma-dev"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="group flex h-12 w-12 items-center justify-center rounded-xl border border-border bg-card/50 backdrop-blur-sm transition-all hover:border-primary hover:bg-primary/10 hover:shadow-lg"
@@ -317,7 +317,7 @@ export default function HomePage() {
                   </MagneticButton>
                   <MagneticButton intensity={0.5}>
                     <a
-                      href="https://linkedin.com/in/abhaysoni"
+                      href="https://linkedin.com/in/vishwakarma-akash"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="group flex h-12 w-12 items-center justify-center rounded-xl border border-border bg-card/50 backdrop-blur-sm transition-all hover:border-primary hover:bg-primary/10 hover:shadow-lg"
@@ -327,7 +327,7 @@ export default function HomePage() {
                   </MagneticButton>
                   <MagneticButton intensity={0.5}>
                     <a
-                      href="mailto:yuvrajsoni411@gmail.com"
+                      href="mailto:akashvis42@gmail.com"
                       className="group flex h-12 w-12 items-center justify-center rounded-xl border border-border bg-card/50 backdrop-blur-sm transition-all hover:border-primary hover:bg-primary/10 hover:shadow-lg"
                     >
                       <Mail className="h-5 w-5 transition-transform group-hover:scale-110" />
@@ -505,8 +505,8 @@ export default function HomePage() {
               </h2>
               <div className="space-y-4 text-lg text-muted-foreground">
                 <p>
-                  Hi, I'm <span className="font-semibold text-foreground">Abhay Soni</span>, 
-                  a passionate software engineer and researcher specializing in artificial 
+                  Hi, I'm <span className="font-semibold text-foreground">Akash Vishwakarma</span>, 
+                  a passionate software engineer specializing in artificial 
                   intelligence and machine learning.
                 </p>
                 <p>
@@ -888,7 +888,7 @@ export default function HomePage() {
                 >
                   <MagneticButton intensity={0.3}>
                     <Button size="lg" asChild>
-                      <a href="mailto:yuvrajsoni411@gmail.com">
+                      <a href="mailto:akashvis42@gmail.com">
                         <Mail className="mr-2 h-5 w-5" />
                         Email Me
                       </a>
@@ -897,7 +897,7 @@ export default function HomePage() {
                   <MagneticButton intensity={0.3}>
                     <Button size="lg" variant="outline" asChild>
                       <a
-                        href="https://github.com/abhaysoni007"
+                        href="https://github.com/Akash-Vishwakarma-dev"
                         target="_blank"
                         rel="noopener noreferrer"
                       >
@@ -909,7 +909,7 @@ export default function HomePage() {
                   <MagneticButton intensity={0.3}>
                     <Button size="lg" variant="outline" asChild>
                       <a
-                        href="https://linkedin.com/in/abhaysoni"
+                        href="https://linkedin.com/in/vishwakarma-akash"
                         target="_blank"
                         rel="noopener noreferrer"
                       >

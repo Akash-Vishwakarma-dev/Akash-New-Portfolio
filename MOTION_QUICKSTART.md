@@ -146,7 +146,7 @@ export default function Home() {
       <MorphBlob className="absolute top-0 right-0 w-96 h-96 opacity-30" />
       
       <ScrollReveal variant="fade">
-        <h1>Abhay Soni</h1>
+        <h1>Akash Vishwakarma</h1>
       </ScrollReveal>
       
       <ScrollReveal variant="slide-up" delay={0.2}>

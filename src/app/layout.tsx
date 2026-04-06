@@ -27,23 +27,23 @@ const poppins = Poppins({
 });
 
 export const metadata: Metadata = {
-  title: "Abhay Soni | Full Stack Developer & AI Engineer",
-  description: "Portfolio of Abhay Soni - Full Stack Developer, AI/ML Engineer, and Open Source Contributor",
+  title: "Akash Vishwakarma | Full Stack Developer & AI Engineer",
+  description: "Portfolio of Akash Vishwakarma - Full Stack Developer, AI/ML Engineer, and Open Source Contributor",
   keywords: ["Full Stack Developer", "AI Engineer", "ML Engineer", "React", "Next.js", "Python", "TypeScript"],
-  authors: [{ name: "Abhay Soni" }],
-  creator: "Abhay Soni",
+  authors: [{ name: "Akash Vishwakarma" }],
+  creator: "Akash Vishwakarma",
   metadataBase: new URL(process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000"),
   openGraph: {
     type: "website",
     locale: "en_US",
-    title: "Abhay Soni | Full Stack Developer & AI Engineer",
-    description: "Portfolio of Abhay Soni - Full Stack Developer, AI/ML Engineer, and Open Source Contributor",
-    siteName: "Abhay Soni Portfolio",
+    title: "Akash Vishwakarma | Full Stack Developer & AI Engineer",
+    description: "Portfolio of Akash Vishwakarma - Full Stack Developer, AI/ML Engineer, and Open Source Contributor",
+    siteName: "Akash Vishwakarma Portfolio",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Abhay Soni | Full Stack Developer & AI Engineer",
-    description: "Portfolio of Abhay Soni - Full Stack Developer, AI/ML Engineer, and Open Source Contributor",
+    title: "Akash Vishwakarma | Full Stack Developer & AI Engineer",
+    description: "Portfolio of Akash Vishwakarma - Full Stack Developer, AI/ML Engineer, and Open Source Contributor",
   },
   robots: {
     index: true,
