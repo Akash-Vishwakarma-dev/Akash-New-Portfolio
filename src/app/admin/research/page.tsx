@@ -1,44 +1,51 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { LottieLoader } from "@/components/admin/lottie-loader";
 import { Plus, Edit, Trash2, Eye, EyeOff, ExternalLink } from "lucide-react";
 import { toast } from "sonner";
 import Link from "next/link";
-
-// Temporary mock data
-const researchPapers = [
-  {
-    id: "1",
-    title: "Machine Learning in Web Development",
-    journal: "IEEE Computer Society",
-    publishedAt: "2024-03-15",
-    url: "https://doi.org/example",
-    published: true,
-  },
-];
+import { getResearch, type Research } from "@/lib/api";
+import apiClient from "@/lib/api-client";
 
 export default function ResearchPage() {
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [researchPapers, setResearchPapers] = useState<Research[]>([]);
+
+  useEffect(() => {
+    getResearch()
+      .then((data) => setResearchPapers(data || []))
+      .catch(() => {
+        toast.error("Failed to load research papers");
+      })
+      .finally(() => setIsLoading(false));
+  }, []);
 
   const handleDelete = async (id: string) => {
     if (!confirm("Are you sure you want to delete this research paper?")) return;
-    
-    setIsLoading(true);
-    setTimeout(() => {
+
+    try {
+      await apiClient.delete(`/api/research/${id}`);
+      setResearchPapers((prev) => prev.filter((paper) => paper.id !== id));
       toast.success("Research paper deleted successfully!");
-      setIsLoading(false);
-    }, 500);
+    } catch (error: any) {
+      const message =
+        error?.response?.data?.error?.message ||
+        error?.response?.data?.message ||
+        "Failed to delete research paper.";
+      toast.error(message);
+    }
   };
 
   const handleTogglePublish = async (id: string, currentStatus: boolean) => {
-    setIsLoading(true);
-    setTimeout(() => {
-      toast.success(`Research paper ${currentStatus ? "unpublished" : "published"}!`);
-      setIsLoading(false);
-    }, 500);
+    setResearchPapers((prev) =>
+      prev.map((paper) =>
+        paper.id === id ? { ...paper, published: !currentStatus } : paper
+      )
+    );
+    toast.success(`Research paper ${currentStatus ? "unpublished" : "published"}!`);
   };
 
   if (isLoading) {
@@ -105,16 +112,17 @@ export default function ResearchPage() {
               <CardContent>
                 <div className="space-y-1 text-sm">
                   <p className="text-muted-foreground">
-                    <strong>Journal:</strong> {paper.journal}
+                    <strong>Venue:</strong> {paper.venue}
                   </p>
                   <p className="text-muted-foreground">
-                    <strong>Published:</strong> {new Date(paper.publishedAt).toLocaleDateString()}
+                    <strong>Published:</strong>{" "}
+                    {new Date(paper.createdAt).toLocaleDateString()}
                   </p>
-                  {paper.url && (
+                  {paper.pdfUrl && (
                     <p className="text-muted-foreground">
                       <strong>URL:</strong>{" "}
                       <a
-                        href={paper.url}
+                        href={paper.pdfUrl}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="inline-flex items-center text-blue-600 hover:underline"

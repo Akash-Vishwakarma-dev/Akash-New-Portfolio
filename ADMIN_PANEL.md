@@ -3,7 +3,7 @@
 ## 🎨 Overview
 
 A production-ready Next.js admin panel built with:
-- **Framework**: Next.js 14 (App Router)
+- **Framework**: Next.js 16 (App Router)
 - **Language**: TypeScript (strict mode)
 - **UI Library**: Tailwind CSS + Custom Components
 - **State Management**: TanStack Query v5

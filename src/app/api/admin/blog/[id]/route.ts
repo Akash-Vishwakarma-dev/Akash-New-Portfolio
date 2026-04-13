@@ -4,15 +4,50 @@ import { successResponse, errorResponse, handleApiError, parseRequestBody, calcu
 import { updateBlogPostSchema } from "@/lib/validations";
 
 /**
+ * GET /api/admin/blog/[id]
+ * Get a single blog post by id (admin only)
+ */
+export async function GET(
+  _request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const { id } = await params;
+
+    const post = await prisma.blogPost.findUnique({
+      where: { id },
+      include: {
+        tags: {
+          select: {
+            id: true,
+            name: true,
+            slug: true,
+            color: true,
+          },
+        },
+      },
+    });
+
+    if (!post) {
+      return errorResponse("Blog post not found", 404, "NOT_FOUND");
+    }
+
+    return successResponse(post);
+  } catch (error) {
+    return handleApiError(error);
+  }
+}
+
+/**
  * PATCH /api/admin/blog/[id]
  * Update a blog post (admin only)
  */
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = params;
+    const { id } = await params;
 
     // Parse and validate request body
     const parseResult = await parseRequestBody(request, updateBlogPostSchema);
@@ -20,7 +55,13 @@ export async function PATCH(
       return parseResult.response;
     }
 
-    const { tagIds, publishedAt, content, ...postData } = parseResult.data;
+    const {
+      tagIds,
+      publishedAt,
+      content,
+      readingTime: providedReadingTime,
+      ...postData
+    } = parseResult.data;
 
     // Get existing post
     const existing = await prisma.blogPost.findUnique({
@@ -32,9 +73,9 @@ export async function PATCH(
     }
 
     // Recalculate reading time if content changed
-    let readingTime = postData.readingTime;
-    if (content && !readingTime) {
-      readingTime = calculateReadingTime(content);
+    let readTime = providedReadingTime;
+    if (content && !readTime) {
+      readTime = calculateReadingTime(content);
     }
 
     // Update blog post
@@ -43,7 +84,7 @@ export async function PATCH(
       data: {
         ...postData,
         ...(content && { content }),
-        ...(readingTime && { readingTime }),
+        ...(readTime !== undefined && { readTime }),
         ...(publishedAt !== undefined && { 
           publishedAt: publishedAt ? new Date(publishedAt) : null 
         }),
@@ -70,10 +111,10 @@ export async function PATCH(
  */
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = params;
+    const { id } = await params;
 
     await prisma.blogPost.delete({
       where: { id },

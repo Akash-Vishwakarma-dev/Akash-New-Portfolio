@@ -55,7 +55,7 @@ export function useUpdateProject() {
   
   return useMutation({
     mutationFn: async ({ id, data }: { id: string; data: UpdateProjectData }) => {
-      const response = await apiClient.put(`/api/admin/projects/${id}`, data);
+      const response = await apiClient.patch(`/api/admin/projects/${id}`, data);
       return response.data;
     },
     onSuccess: () => {
@@ -118,12 +118,23 @@ export function useCreateBlogPost() {
   });
 }
 
+export function useAdminBlogPost(id: string) {
+  return useQuery({
+    queryKey: ["adminBlogPost", id],
+    queryFn: async () => {
+      const { data } = await apiClient.get(`/api/admin/blog/${id}`);
+      return data;
+    },
+    enabled: !!id,
+  });
+}
+
 export function useUpdateBlogPost() {
   const queryClient = useQueryClient();
   
   return useMutation({
     mutationFn: async ({ id, data }: { id: string; data: UpdateBlogPostData }) => {
-      const response = await apiClient.put(`/api/admin/blog/${id}`, data);
+      const response = await apiClient.patch(`/api/admin/blog/${id}`, data);
       return response.data;
     },
     onSuccess: () => {

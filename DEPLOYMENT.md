@@ -73,56 +73,56 @@ Click "Deploy" and wait for the build to complete.
 
 ## Database Setup
 
-### Option 1: Supabase (Recommended)
+### Option 1: MongoDB Atlas (Recommended)
 
-1. **Create Project**
-   - Go to [supabase.com](https://supabase.com)
-   - Create new project
+1. **Create Cluster**
+   - Go to [mongodb.com/atlas](https://www.mongodb.com/atlas)
+   - Create a new cluster (M0 free tier is fine to start)
    - Select region closest to your users
-   - Set strong database password
 
-2. **Get Connection String**
-   - Go to Project Settings → Database
-   - Copy "Connection string" (Connection pooling recommended)
-   - Format: `postgresql://postgres.[project-ref]:[password]@aws-0-[region].pooler.supabase.com:6543/postgres`
+2. **Create DB User and Network Access**
+   - Create a database user with read/write access
+   - Add network access entry (for cloud deploys, `0.0.0.0/0` is common)
 
-3. **Configure Vercel**
+3. **Get Connection String**
+   - Click Connect → Drivers
+   - Copy connection string
+   - Format: `mongodb+srv://<user>:<password>@<cluster>/<db>?retryWrites=true&w=majority`
+
+4. **Configure Vercel**
    - Add `DATABASE_URL` to Vercel environment variables
-   - Use connection pooling URL for better performance
 
-4. **Run Migrations**
+5. **Push Prisma Schema**
    ```bash
-   # From local machine with DATABASE_URL set
+   # From local machine with production DATABASE_URL set
    pnpm db:push
    ```
 
-### Option 2: Neon
+### Option 2: Self-Hosted MongoDB
 
-1. **Create Project**
-   - Go to [neon.tech](https://neon.tech)
-   - Create new project
-   - Select region
+1. **Provision MongoDB**
+   - Deploy MongoDB on your own infrastructure
+   - Ensure public connectivity from deployment environment
 
 2. **Get Connection String**
-   - Copy connection string from dashboard
-   - Format: `postgresql://[user]:[password]@[endpoint]/[dbname]?sslmode=require`
+   - Format: `mongodb://[user]:[password]@[host]:27017/[dbname]?authSource=admin`
 
 3. **Configure Vercel**
    - Add `DATABASE_URL` to environment variables
 
-4. **Run Migrations**
+4. **Push Prisma Schema**
    ```bash
    pnpm db:push
    ```
 
 ### Migration Strategy
 
-**Important:** Vercel doesn't automatically run Prisma migrations.
+**Important:** Vercel doesn't automatically apply Prisma schema changes.
 
 **Option 1: Manual Migration**
 ```bash
 # Set DATABASE_URL to production database
-export DATABASE_URL="postgresql://..."
+export DATABASE_URL="mongodb+srv://..."
 
 # Run migration
 pnpm db:push
@@ -304,7 +304,7 @@ Complete production `.env` template:
 
 ```env
 # Database
-DATABASE_URL="postgresql://[production-db-url]"
+DATABASE_URL="mongodb+srv://[production-db-url]"
 
 # NextAuth
 NEXTAUTH_URL="https://yourdomain.com"
@@ -358,7 +358,7 @@ openssl rand -base64 32
 
 ```bash
 # Set production DATABASE_URL
-export DATABASE_URL="postgresql://..."
+export DATABASE_URL="mongodb+srv://..."
 
 # Run seed
 pnpm db:seed
@@ -414,8 +414,8 @@ Vercel automatically captures logs:
 **Solution:**
 1. Check DATABASE_URL is correct
 2. Verify database is running
-3. Check IP allowlist (Supabase/Neon)
-4. Ensure using connection pooling URL
+3. Check MongoDB Atlas network access/IP allowlist
+4. Ensure connection string includes correct database/user
 
 ### OAuth Not Working
 

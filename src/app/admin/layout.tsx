@@ -12,6 +12,7 @@ import "@/app/globals.css";
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const isLoginPage = pathname === "/admin/login";
+  const isVerifyPage = pathname === "/admin/verify-2fa";
 
   // Don't wrap login page with AdminGuard
   if (isLoginPage) {
@@ -20,6 +21,19 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         <QueryProvider>
           {children}
           <Toaster position="top-right" richColors />
+        </QueryProvider>
+      </ThemeProvider>
+    );
+  }
+
+  if (isVerifyPage) {
+    return (
+      <ThemeProvider>
+        <QueryProvider>
+          <AdminGuard>
+            {children}
+            <Toaster position="top-right" richColors />
+          </AdminGuard>
         </QueryProvider>
       </ThemeProvider>
     );

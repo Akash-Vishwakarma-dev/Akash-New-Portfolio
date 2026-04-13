@@ -10,10 +10,15 @@ import { LoaderOverlay } from "@/components/LoaderOverlay";
 import { MagneticButton } from "@/components/fx/MagneticButton";
 import { getLatestResume } from "@/lib/api";
 import type { Resume } from "@/lib/api";
+import { getResumeLinks } from "@/lib/resume-url";
 
 export default function ResumePage() {
   const [resume, setResume] = useState<Resume | null>(null);
   const [loading, setLoading] = useState(true);
+
+  const resumeUrl = resume?.fileUrl || "";
+  const resumeUpdatedAt = resume?.updatedAt || resume?.createdAt || "";
+  const resumeLinks = getResumeLinks(resumeUrl);
 
   useEffect(() => {
     getLatestResume()
@@ -50,9 +55,9 @@ export default function ResumePage() {
               {resume && (
                 <div className="mt-8 flex flex-wrap justify-center gap-4">
                   <MagneticButton>
-                    <Button asChild size="lg">
+                    <Button asChild size="lg" disabled={!resumeUrl}>
                       <a
-                        href={resume.pdfUrl}
+                        href={resumeLinks.downloadUrl || "#"}
                         download
                         target="_blank"
                         rel="noopener noreferrer"
@@ -63,9 +68,9 @@ export default function ResumePage() {
                     </Button>
                   </MagneticButton>
                   <MagneticButton>
-                    <Button asChild variant="outline" size="lg">
+                    <Button asChild variant="outline" size="lg" disabled={!resumeUrl}>
                       <a
-                        href={resume.pdfUrl}
+                        href={resumeLinks.openUrl || "#"}
                         target="_blank"
                         rel="noopener noreferrer"
                       >
@@ -81,7 +86,7 @@ export default function ResumePage() {
         </section>
 
         {/* PDF Viewer */}
-        {resume && (
+        {resume && resumeUrl && (
           <Section>
             <div className="container mx-auto max-w-6xl px-4">
               <motion.div
@@ -92,16 +97,24 @@ export default function ResumePage() {
                 <Card className="overflow-hidden">
                   <div className="relative aspect-[8.5/11] min-h-[600px] md:min-h-[800px]">
                     <iframe
-                      src={`${resume.pdfUrl}#toolbar=0`}
+                      src={resumeLinks.isGoogleDrive ? resumeLinks.embedUrl : `${resumeLinks.embedUrl}#toolbar=0`}
                       className="h-full w-full border-0"
                       title="Resume PDF"
                     />
                   </div>
                 </Card>
 
+                {resumeLinks.isGoogleDrive && (
+                  <p className="mt-3 text-center text-xs text-muted-foreground">
+                    If preview shows access denied, set the Google Drive file to "Anyone with the link can view".
+                  </p>
+                )}
+
                 <div className="mt-4 text-center text-sm text-muted-foreground">
                   <p>Version: {resume.version}</p>
-                  <p>Last Updated: {new Date(resume.uploadedAt).toLocaleDateString()}</p>
+                  <p>
+                    Last Updated: {resumeUpdatedAt ? new Date(resumeUpdatedAt).toLocaleDateString() : "N/A"}
+                  </p>
                 </div>
               </motion.div>
             </div>

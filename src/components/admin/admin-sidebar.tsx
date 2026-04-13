@@ -23,7 +23,8 @@ const navItems = [
   { href: "/admin/certifications", label: "Certifications", icon: Award },
   { href: "/admin/achievements", label: "Achievements", icon: Trophy },
   { href: "/admin/gallery", label: "Gallery", icon: Image },
-  { href: "/admin/lottie", label: "Animations", icon: FileCode },
+  { href: "/admin/resume", label: "Resume", icon: FileText },
+  { href: "/admin/animations", label: "Animations", icon: FileCode },
   { href: "/admin/settings", label: "Settings", icon: Settings },
 ];
 

@@ -31,8 +31,8 @@ notepad .env
 ### Minimum Required Variables (for local development)
 
 ```env
-# Database (you can use a free tier from Supabase or Neon)
-DATABASE_URL="postgresql://user:password@localhost:5432/portfolio"
+# Database (MongoDB Atlas recommended)
+DATABASE_URL="mongodb+srv://<user>:<password>@<cluster>/<db>?retryWrites=true&w=majority"
 
 # NextAuth (generate a random secret)
 NEXTAUTH_URL="http://localhost:3000"
@@ -74,33 +74,28 @@ Or use an online generator: https://generate-secret.vercel.app/32
 
 ## Step 3: Set Up Database
 
-### Option A: Local PostgreSQL
+### Option A: Local MongoDB
 
 ```bash
-# Install PostgreSQL (if not installed)
-# Download from: https://www.postgresql.org/download/windows/
-
-# Create database
-psql -U postgres
-CREATE DATABASE portfolio;
-\q
+# Install MongoDB Community Server (if not installed)
+# Download from: https://www.mongodb.com/try/download/community
 
 # Update .env
-DATABASE_URL="postgresql://postgres:yourpassword@localhost:5432/portfolio"
+DATABASE_URL="mongodb://localhost:27017/portfolio"
 ```
 
-### Option B: Supabase (Recommended - Free Tier)
+### Option B: MongoDB Atlas (Recommended - Free Tier)
 
-1. Go to https://supabase.com
-2. Create account and new project
-3. Go to Settings → Database
-4. Copy connection string (use "Connection pooling" mode)
+1. Go to https://www.mongodb.com/atlas
+2. Create account and a new cluster
+3. Create a database user and allow network access
+4. Copy connection string from Connect → Drivers
 5. Paste into `.env` as `DATABASE_URL`
 
-### Option C: Neon (Free Tier)
+### Option C: Self-Hosted MongoDB
 
-1. Go to https://neon.tech
-2. Create account and new project
+1. Provision a MongoDB instance/server
+2. Create user and database
 3. Copy connection string
 4. Paste into `.env` as `DATABASE_URL`
 
@@ -190,7 +185,7 @@ Opens a visual database browser at http://localhost:5555
 ## Common Issues
 
 ### "Can't reach database server"
-- Check PostgreSQL is running
+- Check MongoDB is running
 - Verify DATABASE_URL is correct
 - Check firewall/network settings
 

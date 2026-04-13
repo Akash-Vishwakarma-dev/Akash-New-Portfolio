@@ -66,6 +66,21 @@ export interface Project {
   tags: Tag[];
 }
 
+type ProjectApiPayload = Omit<Project, "coverImage" | "githubUrl"> & {
+  coverImage?: string;
+  coverImageUrl?: string | null;
+  githubUrl?: string;
+  repoUrl?: string | null;
+};
+
+function normalizeProject(project: ProjectApiPayload): Project {
+  return {
+    ...project,
+    coverImage: project.coverImage ?? project.coverImageUrl ?? undefined,
+    githubUrl: project.githubUrl ?? project.repoUrl ?? undefined,
+  };
+}
+
 export interface BlogPost {
   id: string;
   title: string;
@@ -80,6 +95,18 @@ export interface BlogPost {
   createdAt: string;
   updatedAt: string;
   tags: Tag[];
+}
+
+type BlogPostApiPayload = Omit<BlogPost, "coverImage"> & {
+  coverImage?: string;
+  coverImageUrl?: string | null;
+};
+
+function normalizeBlogPost(post: BlogPostApiPayload): BlogPost {
+  return {
+    ...post,
+    coverImage: post.coverImage ?? post.coverImageUrl ?? undefined,
+  };
 }
 
 export interface Research {
@@ -107,6 +134,7 @@ export interface Certification {
   description?: string;
   skills: string[];
   badgeUrl?: string;
+  published: boolean;
 }
 
 export interface Achievement {
@@ -127,15 +155,20 @@ export interface MediaItem {
   caption?: string;
   capturedAt?: string;
   projectId?: string;
+  type?: "image" | "video" | "demo";
+  displayOrder?: number;
   createdAt: string;
 }
 
 export interface Resume {
   id: string;
   version: string;
-  pdfUrl: string;
-  isLatest: boolean;
-  uploadedAt: string;
+  fileUrl: string;
+  fileName: string;
+  isActive: boolean;
+  description?: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface Tag {
@@ -160,12 +193,14 @@ export async function getProjects(params?: {
   tag?: string;
 }): Promise<Project[]> {
   const { data } = await apiClient.get("/api/projects", { params });
-  return data.data || data;
+  const projects = (data.data || data) as ProjectApiPayload[];
+  return projects.map(normalizeProject);
 }
 
 export async function getProject(slug: string): Promise<Project> {
   const { data } = await apiClient.get(`/api/projects/${slug}`);
-  return data.data || data;
+  const project = (data.data || data) as ProjectApiPayload;
+  return normalizeProject(project);
 }
 
 export async function incrementProjectViews(slug: string): Promise<void> {
@@ -180,12 +215,14 @@ export async function getBlogPosts(params?: {
   search?: string;
 }): Promise<BlogPost[]> {
   const { data } = await apiClient.get("/api/blog", { params });
-  return data.data || data;
+  const posts = (data.data || data) as BlogPostApiPayload[];
+  return posts.map(normalizeBlogPost);
 }
 
 export async function getBlogPost(slug: string): Promise<BlogPost> {
   const { data } = await apiClient.get(`/api/blog/${slug}`);
-  return data.data || data;
+  const post = (data.data || data) as BlogPostApiPayload;
+  return normalizeBlogPost(post);
 }
 
 export async function incrementBlogViews(slug: string): Promise<void> {
@@ -244,7 +281,12 @@ export async function getTags(): Promise<Tag[]> {
 // Error handler utility
 export function handleApiError(error: unknown): string {
   if (error instanceof AxiosError) {
-    return error.response?.data?.message || error.message || "An error occurred";
+    return (
+      error.response?.data?.error?.message ||
+      error.response?.data?.message ||
+      error.message ||
+      "An error occurred"
+    );
   }
   return "An unexpected error occurred";
 }

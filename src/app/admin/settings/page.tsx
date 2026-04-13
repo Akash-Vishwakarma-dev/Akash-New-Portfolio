@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -10,7 +10,21 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
 import { LottieLoader } from "@/components/admin/lottie-loader";
 import { toast } from "sonner";
-import { Save, RefreshCw, Database, Mail, Cloud, Shield } from "lucide-react";
+import { Save, RefreshCw, Database, Mail, Shield } from "lucide-react";
+
+const SETTINGS_STORAGE_KEY = "admin-settings-v1";
+
+type AdminSettings = {
+  siteName: string;
+  siteDescription: string;
+  maintenanceMode: boolean;
+  emailNotifications: boolean;
+  contactFormEmail: string;
+  dbBackupEnabled: boolean;
+  dbBackupFrequency: string;
+  twoFactorEnabled: boolean;
+  sessionTimeout: string;
+};
 
 export default function SettingsPage() {
   const [isLoading, setIsLoading] = useState(false);
@@ -23,7 +37,7 @@ export default function SettingsPage() {
 
   // Email Settings
   const [emailNotifications, setEmailNotifications] = useState(true);
-  const [contactFormEmail, setContactFormEmail] = useState("admin@example.com");
+  const [contactFormEmail, setContactFormEmail] = useState("");
 
   // Database Settings
   const [dbBackupEnabled, setDbBackupEnabled] = useState(true);
@@ -33,12 +47,99 @@ export default function SettingsPage() {
   const [twoFactorEnabled, setTwoFactorEnabled] = useState(false);
   const [sessionTimeout, setSessionTimeout] = useState("30");
 
+  useEffect(() => {
+    try {
+      const raw = window.localStorage.getItem(SETTINGS_STORAGE_KEY);
+      if (!raw) return;
+
+      const saved = JSON.parse(raw) as Partial<AdminSettings>;
+
+      if (typeof saved.siteName === "string") setSiteName(saved.siteName);
+      if (typeof saved.siteDescription === "string") setSiteDescription(saved.siteDescription);
+      if (typeof saved.maintenanceMode === "boolean") setMaintenanceMode(saved.maintenanceMode);
+      if (typeof saved.emailNotifications === "boolean") setEmailNotifications(saved.emailNotifications);
+      if (typeof saved.contactFormEmail === "string") setContactFormEmail(saved.contactFormEmail);
+      if (typeof saved.dbBackupEnabled === "boolean") setDbBackupEnabled(saved.dbBackupEnabled);
+      if (typeof saved.dbBackupFrequency === "string") setDbBackupFrequency(saved.dbBackupFrequency);
+      if (typeof saved.twoFactorEnabled === "boolean") setTwoFactorEnabled(saved.twoFactorEnabled);
+      if (typeof saved.sessionTimeout === "string") setSessionTimeout(saved.sessionTimeout);
+    } catch {
+      // Ignore malformed saved settings and continue with defaults.
+    }
+
+    const loadSettings = async () => {
+      try {
+        const response = await fetch("/api/admin/settings", {
+          method: "GET",
+          credentials: "include",
+        });
+
+        if (!response.ok) return;
+
+        const payload = await response.json();
+        const data = payload?.data;
+
+        if (typeof data?.contactFormEmail === "string") {
+          setContactFormEmail(data.contactFormEmail);
+        }
+        if (typeof data?.emailNotifications === "boolean") {
+          setEmailNotifications(data.emailNotifications);
+        }
+        if (typeof data?.twoFactorEnabled === "boolean") {
+          setTwoFactorEnabled(data.twoFactorEnabled);
+        }
+        if (typeof data?.sessionTimeout === "number" && Number.isFinite(data.sessionTimeout)) {
+          setSessionTimeout(String(data.sessionTimeout));
+        }
+      } catch {
+        // Ignore API load failures; local state/defaults are still usable.
+      }
+    };
+
+    loadSettings();
+  }, []);
+
   const handleSave = async () => {
     setIsSaving(true);
-    setTimeout(() => {
+    try {
+      const settings: AdminSettings = {
+        siteName,
+        siteDescription,
+        maintenanceMode,
+        emailNotifications,
+        contactFormEmail,
+        dbBackupEnabled,
+        dbBackupFrequency,
+        twoFactorEnabled,
+        sessionTimeout,
+      };
+
+      window.localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(settings));
+
+      const response = await fetch("/api/admin/settings", {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify({
+          contactFormEmail,
+          emailNotifications,
+          twoFactorEnabled,
+          sessionTimeout: Number(sessionTimeout) || 30,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to persist settings");
+      }
+
       toast.success("Settings saved successfully!");
+    } catch {
+      toast.error("Failed to save settings.");
+    } finally {
       setIsSaving(false);
-    }, 1000);
+    }
   };
 
   const handleClearCache = () => {

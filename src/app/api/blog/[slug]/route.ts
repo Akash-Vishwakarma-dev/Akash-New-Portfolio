@@ -9,7 +9,7 @@ import { checkRateLimit, getClientIdentifier, publicRateLimit } from "@/lib/rate
  */
 export async function GET(
   request: NextRequest,
-  { params }: { params: { slug: string } }
+  { params }: { params: Promise<{ slug: string }> }
 ) {
   try {
     // Rate limiting
@@ -19,7 +19,8 @@ export async function GET(
       return rateLimitResult.response;
     }
 
-    const { slug } = params;
+    const { slug: rawSlug } = await params;
+    const slug = decodeURIComponent(rawSlug);
 
     const post = await prisma.blogPost.findUnique({
       where: { slug },
@@ -48,7 +49,7 @@ export async function GET(
     prisma.blogPost
       .update({
         where: { id: post.id },
-        data: { views: { increment: 1 } },
+        data: { viewCount: { increment: 1 } },
       })
       .catch((error) => console.error("Failed to increment views:", error));
 

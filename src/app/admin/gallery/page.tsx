@@ -1,45 +1,72 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { LottieLoader } from "@/components/admin/lottie-loader";
-import { Plus, Edit, Trash2, Eye, EyeOff, Image as ImageIcon } from "lucide-react";
+import { Plus, Edit, Trash2, Image as ImageIcon } from "lucide-react";
 import { toast } from "sonner";
 import Link from "next/link";
-import Image from "next/image";
+import apiClient from "@/lib/api-client";
 
-// Temporary mock data
-const galleryItems = [
-  {
-    id: "1",
-    title: "Project Screenshot",
-    category: "Projects",
-    imageUrl: "/placeholder.jpg",
-    published: true,
-    createdAt: "2024-01-15",
-  },
-];
+function isVideoUrl(url: string, type?: string): boolean {
+  if (type === "video") return true;
+  return /\.(mp4|webm|ogg|mov)(\?.*)?$/i.test(url);
+}
+
+interface GalleryListItem {
+  id: string;
+  url: string;
+  caption?: string;
+  type?: string;
+  projectId?: string;
+  createdAt?: string;
+  displayOrder?: number;
+}
 
 export default function GalleryPage() {
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [galleryItems, setGalleryItems] = useState<GalleryListItem[]>([]);
+
+  const fetchGalleryItems = async () => {
+    setIsLoading(true);
+    try {
+      const response = await apiClient.get("/api/gallery");
+      const items = (response.data?.data || response.data || []) as GalleryListItem[];
+      setGalleryItems(items);
+    } catch (error: any) {
+      const message =
+        error?.response?.data?.error?.message ||
+        error?.response?.data?.message ||
+        "Failed to load gallery items.";
+      toast.error(message);
+      setGalleryItems([]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchGalleryItems();
+  }, []);
 
   const handleDelete = async (id: string) => {
     if (!confirm("Are you sure you want to delete this gallery item?")) return;
-    
-    setIsLoading(true);
-    setTimeout(() => {
-      toast.success("Gallery item deleted successfully!");
-      setIsLoading(false);
-    }, 500);
-  };
 
-  const handleTogglePublish = async (id: string, currentStatus: boolean) => {
     setIsLoading(true);
-    setTimeout(() => {
-      toast.success(`Gallery item ${currentStatus ? "unpublished" : "published"}!`);
+    try {
+      await apiClient.delete(`/api/gallery/${id}`);
+      setGalleryItems((prev) => prev.filter((item) => item.id !== id));
+      toast.success("Gallery item deleted successfully!");
+    } catch (error: any) {
+      const message =
+        error?.response?.data?.error?.message ||
+        error?.response?.data?.message ||
+        "Failed to delete gallery item.";
+      toast.error(message);
+    } finally {
       setIsLoading(false);
-    }, 500);
+    }
   };
 
   if (isLoading) {
@@ -76,31 +103,30 @@ export default function GalleryPage() {
           galleryItems.map((item) => (
             <Card key={item.id}>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-base font-medium truncate">{item.title}</CardTitle>
-                <div className="flex gap-1">
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-8 w-8"
-                    onClick={() => handleTogglePublish(item.id, item.published)}
-                  >
-                    {item.published ? (
-                      <Eye className="h-4 w-4" />
-                    ) : (
-                      <EyeOff className="h-4 w-4" />
-                    )}
-                  </Button>
-                </div>
+                <CardTitle className="text-base font-medium truncate">
+                  {item.caption || "Untitled Media"}
+                </CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
                 <div className="relative aspect-video overflow-hidden rounded-md bg-muted">
-                  {item.imageUrl ? (
-                    <Image
-                      src={item.imageUrl}
-                      alt={item.title}
-                      fill
-                      className="object-cover"
-                    />
+                  {item.url ? (
+                    isVideoUrl(item.url, item.type) ? (
+                      <video
+                        src={item.url}
+                        className="h-full w-full object-cover"
+                        controls
+                        playsInline
+                        preload="metadata"
+                      />
+                    ) : (
+                      <img
+                        src={item.url}
+                        alt={item.caption || "Gallery image"}
+                        className="h-full w-full object-cover"
+                        loading="lazy"
+                        referrerPolicy="no-referrer"
+                      />
+                    )
                   ) : (
                     <div className="flex h-full items-center justify-center">
                       <ImageIcon className="h-8 w-8 text-muted-foreground" />
@@ -109,13 +135,14 @@ export default function GalleryPage() {
                 </div>
                 <div className="space-y-1 text-sm">
                   <p className="text-muted-foreground">
-                    <strong>Category:</strong> {item.category}
+                    <strong>Type:</strong> {(item.type || "image").toUpperCase()}
                   </p>
                   <p className="text-muted-foreground">
-                    <strong>Status:</strong>{" "}
-                    <span className={item.published ? "text-green-600" : "text-yellow-600"}>
-                      {item.published ? "Published" : "Draft"}
-                    </span>
+                    <strong>Display Order:</strong> {item.displayOrder ?? 0}
+                  </p>
+                  <p className="text-muted-foreground">
+                    <strong>Created:</strong>{" "}
+                    {item.createdAt ? new Date(item.createdAt).toLocaleDateString() : "-"}
                   </p>
                 </div>
                 <div className="flex gap-2">

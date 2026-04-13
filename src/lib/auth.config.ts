@@ -10,7 +10,7 @@ import { UserRole } from "@prisma/client";
  * NextAuth configuration
  */
 export const authConfig = {
-  adapter: PrismaAdapter(prisma),
+  adapter: PrismaAdapter(prisma) as NextAuthConfig["adapter"],
   providers: [
     // GitHub provider (always enabled)
     GitHub({
@@ -95,12 +95,6 @@ declare module "next-auth" {
   }
 
   interface User {
-    role: UserRole;
-  }
-}
-
-declare module "@auth/core/adapters" {
-  interface AdapterUser {
     role: UserRole;
   }
 }

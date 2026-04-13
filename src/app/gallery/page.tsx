@@ -2,13 +2,17 @@
 
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Image as ImageIcon, X, ChevronLeft, ChevronRight, Calendar } from "lucide-react";
-import Image from "next/image";
+import { Image as ImageIcon, X, ChevronLeft, ChevronRight, Calendar, Play } from "lucide-react";
 import { Section } from "@/components/Section";
 import { LoaderOverlay } from "@/components/LoaderOverlay";
 import { getGallery } from "@/lib/api";
 import type { MediaItem } from "@/lib/api";
 import { formatDate } from "@/lib/utils";
+
+function isVideoItem(item: MediaItem): boolean {
+  if (item.type === "video") return true;
+  return /\.(mp4|webm|ogg|mov)(\?.*)?$/i.test(item.url);
+}
 
 export default function GalleryPage() {
   const [gallery, setGallery] = useState<MediaItem[]>([]);
@@ -96,13 +100,28 @@ export default function GalleryPage() {
                     onClick={() => setSelectedImage(item)}
                   >
                     <div className="relative aspect-square">
-                      <Image
-                        src={item.url}
-                        alt={item.caption || "Gallery image"}
-                        fill
-                        className="object-cover"
-                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
-                      />
+                      {isVideoItem(item) ? (
+                        <>
+                          <video
+                            src={item.url}
+                            className="h-full w-full object-cover"
+                            muted
+                            playsInline
+                            preload="metadata"
+                          />
+                          <div className="absolute inset-0 flex items-center justify-center bg-black/20">
+                            <Play className="h-10 w-10 text-white" />
+                          </div>
+                        </>
+                      ) : (
+                        <img
+                          src={item.url}
+                          alt={item.caption || "Gallery image"}
+                          className="h-full w-full object-cover"
+                          loading="lazy"
+                          referrerPolicy="no-referrer"
+                        />
+                      )}
                     </div>
                     {item.caption && (
                       <div className="p-3">
@@ -167,7 +186,7 @@ export default function GalleryPage() {
                 </button>
               )}
 
-              {/* Image */}
+              {/* Media */}
               <motion.div
                 initial={{ scale: 0.9 }}
                 animate={{ scale: 1 }}
@@ -175,14 +194,22 @@ export default function GalleryPage() {
                 className="relative max-h-[90vh] max-w-[90vw]"
                 onClick={(e) => e.stopPropagation()}
               >
-                <Image
-                  src={selectedImage.url}
-                  alt={selectedImage.caption || "Gallery image"}
-                  width={1200}
-                  height={800}
-                  className="h-auto max-h-[90vh] w-auto object-contain"
-                  priority
-                />
+                {isVideoItem(selectedImage) ? (
+                  <video
+                    src={selectedImage.url}
+                    className="h-auto max-h-[90vh] w-auto max-w-[90vw] object-contain"
+                    controls
+                    autoPlay
+                    playsInline
+                  />
+                ) : (
+                  <img
+                    src={selectedImage.url}
+                    alt={selectedImage.caption || "Gallery image"}
+                    className="h-auto max-h-[90vh] w-auto max-w-[90vw] object-contain"
+                    referrerPolicy="no-referrer"
+                  />
+                )}
 
                 {/* Caption */}
                 {selectedImage.caption && (

@@ -124,11 +124,11 @@ export const updateMediaItemSchema = createMediaItemSchema.partial();
 // ============================================
 
 export const createResumeSchema = z.object({
-  pdfUrl: z.string().url(),
+  fileUrl: z.string().url(),
   version: z.string().min(1).max(50),
   fileName: z.string().min(1),
-  fileSize: z.number().int().positive(),
-  isCurrent: z.boolean().default(false),
+  isActive: z.boolean().default(false),
+  description: z.string().max(500).optional().nullable(),
 });
 
 export const updateResumeSchema = createResumeSchema.partial();
@@ -184,10 +184,10 @@ export const uploadRequestSchema = z.object({
 // ============================================
 
 export const contactSubmissionSchema = z.object({
-  name: z.string().min(1).max(100),
-  email: z.string().email(),
-  subject: z.string().max(200).optional().nullable(),
-  message: z.string().min(10).max(2000),
+  name: z.string().trim().min(1).max(100),
+  email: z.string().trim().email(),
+  subject: z.string().trim().max(200).optional().nullable(),
+  message: z.string().trim().min(1).max(2000),
 });
 
 export const updateContactSubmissionSchema = z.object({

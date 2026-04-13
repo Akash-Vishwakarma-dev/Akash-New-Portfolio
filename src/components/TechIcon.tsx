@@ -5,6 +5,8 @@ import {
   SiNextdotjs,
   SiTypescript,
   SiJavascript,
+  SiHtml5,
+  SiCss,
   SiPython,
   SiNodedotjs,
   SiTailwindcss,
@@ -21,9 +23,12 @@ import {
   SiRedis,
   SiGraphql,
   SiExpress,
+  SiSocketdotio,
   SiFastapi,
   SiFlask,
   SiDjango,
+  SiGooglecloud,
+  SiKubernetes,
   SiVuedotjs,
   SiAngular,
   SiSvelte,
@@ -37,6 +42,9 @@ import {
   SiFigma,
 } from "react-icons/si";
 import { IconType } from "react-icons";
+import { FaJava } from "react-icons/fa";
+import { FaAws } from "react-icons/fa6";
+import { VscAzure } from "react-icons/vsc";
 
 interface TechIconProps {
   name: string;
@@ -51,6 +59,10 @@ const techIconMap: Record<string, { icon: IconType; color: string }> = {
   nextjs: { icon: SiNextdotjs, color: "#000000" },
   typescript: { icon: SiTypescript, color: "#3178C6" },
   javascript: { icon: SiJavascript, color: "#F7DF1E" },
+  html: { icon: SiHtml5, color: "#E34F26" },
+  html5: { icon: SiHtml5, color: "#E34F26" },
+  css: { icon: SiCss, color: "#1572B6" },
+  css3: { icon: SiCss, color: "#1572B6" },
   tailwind: { icon: SiTailwindcss, color: "#06B6D4" },
   "tailwind css": { icon: SiTailwindcss, color: "#06B6D4" },
   vue: { icon: SiVuedotjs, color: "#4FC08D" },
@@ -66,9 +78,12 @@ const techIconMap: Record<string, { icon: IconType; color: string }> = {
   nodejs: { icon: SiNodedotjs, color: "#339933" },
   express: { icon: SiExpress, color: "#000000" },
   "express.js": { icon: SiExpress, color: "#000000" },
+  "socket.io": { icon: SiSocketdotio, color: "#010101" },
+  socketio: { icon: SiSocketdotio, color: "#010101" },
   fastapi: { icon: SiFastapi, color: "#009688" },
   flask: { icon: SiFlask, color: "#000000" },
   django: { icon: SiDjango, color: "#092E20" },
+  java: { icon: FaJava, color: "#F89820" },
 
   // Databases
   mongodb: { icon: SiMongodb, color: "#47A248" },
@@ -91,7 +106,11 @@ const techIconMap: Record<string, { icon: IconType; color: string }> = {
   git: { icon: SiGit, color: "#F05032" },
   github: { icon: SiGithub, color: "#181717" },
   gitlab: { icon: SiGitlab, color: "#FC6D26" },
-  // aws: { icon: SiAwsamplify, color: "#FF9900" },
+  aws: { icon: FaAws, color: "#FF9900" },
+  "google cloud": { icon: SiGooglecloud, color: "#4285F4" },
+  gcp: { icon: SiGooglecloud, color: "#4285F4" },
+  azure: { icon: VscAzure, color: "#0078D4" },
+  kubernetes: { icon: SiKubernetes, color: "#326CE5" },
   vercel: { icon: SiVercel, color: "#000000" },
   graphql: { icon: SiGraphql, color: "#E10098" },
   stripe: { icon: SiStripe, color: "#008CDD" },

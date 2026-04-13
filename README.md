@@ -1,6 +1,6 @@
 # Portfolio Backend - Production-Grade Next.js API
 
-A secure, scalable backend system for a professional developer portfolio platform built with Next.js 14, Prisma, PostgreSQL, and Cloudflare R2.
+A secure, scalable backend system for a professional developer portfolio platform built with Next.js 16, Prisma, MongoDB, and Cloudflare R2.
 
 ## 📋 Table of Contents
 
@@ -29,10 +29,10 @@ A secure, scalable backend system for a professional developer portfolio platfor
 | Layer | Technology |
 |-------|-----------|
 | Runtime | Node.js 20+ |
-| Framework | Next.js 14 (App Router) |
+| Framework | Next.js 16 (App Router) |
 | Language | TypeScript |
 | ORM | Prisma |
-| Database | PostgreSQL (Supabase/Neon) |
+| Database | MongoDB (Atlas or self-hosted) |
 | Auth | Auth.js (NextAuth v5) |
 | Validation | Zod |
 | Storage | Cloudflare R2 |
@@ -45,7 +45,7 @@ A secure, scalable backend system for a professional developer portfolio platfor
 
 - Node.js 20+
 - pnpm 8+
-- PostgreSQL database (or Supabase/Neon account)
+- MongoDB database (MongoDB Atlas recommended)
 - Cloudflare R2 bucket
 - Upstash Redis instance
 
@@ -99,7 +99,7 @@ Create a `.env` file based on `.env.example`:
 
 ```env
 # Database
-DATABASE_URL="postgresql://user:password@localhost:5432/portfolio"
+DATABASE_URL="mongodb+srv://<user>:<password>@<cluster>/<db>?retryWrites=true&w=majority"
 
 # NextAuth
 NEXTAUTH_URL="http://localhost:3000"
@@ -147,38 +147,31 @@ ADMIN_EMAILS="admin@example.com,another@example.com"
 
 ## 💾 Database Setup
 
-### Using Supabase (Recommended)
+### Using MongoDB Atlas (Recommended)
 
-1. Create a free account at [supabase.com](https://supabase.com)
-2. Create a new project
-3. Get the connection string from Settings → Database
-4. Update `DATABASE_URL` in `.env`
+1. Create a free account at [mongodb.com/atlas](https://www.mongodb.com/atlas)
+2. Create a new cluster
+3. Create a database user and whitelist your IP (or use `0.0.0.0/0` for cloud deploys)
+4. Copy the connection string and update `DATABASE_URL` in `.env`
 
-### Using Neon
+Example:
 
-1. Create account at [neon.tech](https://neon.tech)
-2. Create a new project
-3. Copy the connection string
-4. Update `DATABASE_URL` in `.env`
+```env
+DATABASE_URL="mongodb+srv://<user>:<password>@<cluster>/<db>?retryWrites=true&w=majority"
+```
 
-### Local PostgreSQL
+### Local MongoDB
 
 ```bash
-# Install PostgreSQL
-# Create database
-createdb portfolio
-
-# Update .env
-DATABASE_URL="postgresql://localhost:5432/portfolio"
+# Start local MongoDB and create database
+# Then set .env
+DATABASE_URL="mongodb://localhost:27017/portfolio"
 ```
 
 ### Migrations
 
 ```bash
-# Create a migration
-pnpm db:migrate
-
-# Push schema without migrations (dev)
+# MongoDB uses Prisma db push (migrations are not supported like SQL providers)
 pnpm db:push
 
 # Open Prisma Studio

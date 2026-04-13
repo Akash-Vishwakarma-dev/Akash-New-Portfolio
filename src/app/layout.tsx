@@ -6,8 +6,7 @@ import { QueryProvider } from "@/components/providers/query-provider";
 import { SessionProvider } from "@/components/providers/session-provider";
 import { CursorFXProvider } from "@/components/fx/CursorFXProvider";
 import { SmoothScrollProvider } from "@/components/SmoothScrollProvider";
-import { Navbar } from "@/components/Navbar";
-import { Footer } from "@/components/Footer";
+import { AppShell } from "@/components/AppShell";
 import "./globals.css";
 
 // Font optimization with display swap
@@ -95,11 +94,7 @@ export default function RootLayout({
                     disableOnMobile: true,
                   }}
                 >
-                  <div className="relative flex min-h-screen flex-col">
-                    <Navbar />
-                    <main className="flex-1 pt-16">{children}</main>
-                    <Footer />
-                  </div>
+                  <AppShell>{children}</AppShell>
                   <Toaster richColors position="top-right" />
                 </CursorFXProvider>
               </SmoothScrollProvider>

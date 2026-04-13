@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { MagneticButton } from "@/components/fx/MagneticButton";
 import { LottieIcon } from "@/components/LottieIcon";
-import { submitContactForm } from "@/lib/api";
+import { handleApiError, submitContactForm } from "@/lib/api";
 import type { ContactFormData } from "@/lib/api";
 import { toast } from "sonner";
 
@@ -18,19 +18,19 @@ const contactInfo = [
   {
     icon: Mail,
     label: "Email",
-    value: "contact@abhaysoni.dev",
-    href: "mailto:contact@abhaysoni.dev",
+    value: "akashvis42@gmail.com",
+    href: "mailto:akashvis42@gmail.com",
   },
   {
     icon: Phone,
     label: "Phone",
-    value: "+1 (555) 123-4567",
-    href: "tel:+15551234567",
+    value: "+91 7275053155",
+    href: "tel:+91 7275053155",
   },
   {
     icon: MapPin,
     label: "Location",
-    value: "San Francisco, CA",
+    value: "Kanpur, IN",
     href: null,
   },
 ];
@@ -39,17 +39,17 @@ const socialLinks = [
   {
     icon: Github,
     label: "GitHub",
-    href: "https://github.com/abhaysoni007",
+    href: "https://github.com/Akash-Vishwakarma-dev",
   },
   {
     icon: Linkedin,
     label: "LinkedIn",
-    href: "https://linkedin.com/in/abhaysoni007",
+    href: "https://linkedin.com/in/vishwakarma-akash",
   },
   {
     icon: Twitter,
     label: "Twitter",
-    href: "https://twitter.com/abhaysoni007",
+    href: "https://twitter.com/Er_akash__",
   },
 ];
 
@@ -81,7 +81,7 @@ function ContactContent() {
       
       if (result.success) {
         setShowSuccess(true);
-        toast.success("Message sent successfully! I'll get back to you soon.");
+        toast.success(result.message || "Message sent successfully! I'll get back to you soon.");
         
         // Reset form
         setFormData({
@@ -95,7 +95,8 @@ function ContactContent() {
         setTimeout(() => setShowSuccess(false), 3000);
       }
     } catch (error) {
-      toast.error("Failed to send message. Please try again or email me directly.");
+      const message = handleApiError(error);
+      toast.error(message || "Failed to send message. Please try again or email me directly.");
       console.error("Contact form error:", error);
     } finally {
       setIsSubmitting(false);

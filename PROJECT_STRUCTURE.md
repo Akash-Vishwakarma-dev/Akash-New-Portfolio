@@ -261,4 +261,4 @@ See [DEPLOYMENT.md](./DEPLOYMENT.md) for detailed deployment instructions.
 
 ---
 
-This structure follows Next.js 14 App Router best practices and is optimized for scalability and maintainability.
+This structure follows Next.js 16 App Router best practices and is optimized for scalability and maintainability.

@@ -3,13 +3,17 @@ import { prisma } from "@/lib/db";
 import { successResponse, errorResponse, handleApiError } from "@/lib/api-utils";
 import { checkRateLimit, getClientIdentifier, publicRateLimit } from "@/lib/rate-limit";
 
+function isObjectId(value: string): boolean {
+  return /^[a-fA-F0-9]{24}$/.test(value);
+}
+
 /**
  * GET /api/projects/[slug]
  * Get a single project by slug
  */
 export async function GET(
   request: NextRequest,
-  { params }: { params: { slug: string } }
+  { params }: { params: Promise<{ slug: string }> }
 ) {
   try {
     // Rate limiting
@@ -19,10 +23,15 @@ export async function GET(
       return rateLimitResult.response;
     }
 
-    const { slug } = params;
+    const { slug: rawSlug } = await params;
+    const slug = decodeURIComponent(rawSlug);
 
-    const project = await prisma.project.findUnique({
-      where: { slug },
+    const project = await prisma.project.findFirst({
+      where: isObjectId(slug)
+        ? {
+            OR: [{ slug }, { id: slug }],
+          }
+        : { slug },
       include: {
         tags: {
           select: {
@@ -35,24 +44,19 @@ export async function GET(
         mediaItems: {
           select: {
             id: true,
-            title: true,
-            description: true,
-            imageUrl: true,
-            thumbnailUrl: true,
-            altText: true,
-            takenAt: true,
+            url: true,
+            type: true,
+            caption: true,
+            displayOrder: true,
+            createdAt: true,
+            updatedAt: true,
           },
-          orderBy: { createdAt: "asc" },
+          orderBy: [{ displayOrder: "asc" }, { createdAt: "asc" }],
         },
       },
     });
 
     if (!project) {
-      return errorResponse("Project not found", 404, "NOT_FOUND");
-    }
-
-    // Only return published projects for public API
-    if (!project.published) {
       return errorResponse("Project not found", 404, "NOT_FOUND");
     }
 

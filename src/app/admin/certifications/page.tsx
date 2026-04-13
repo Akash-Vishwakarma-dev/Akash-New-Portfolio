@@ -1,46 +1,49 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { LottieLoader } from "@/components/admin/lottie-loader";
 import { Plus, Edit, Trash2, Eye, EyeOff } from "lucide-react";
 import { toast } from "sonner";
 import Link from "next/link";
-
-// Temporary mock data - replace with actual API hooks
-const certifications = [
-  {
-    id: "1",
-    title: "AWS Certified Solutions Architect",
-    issuer: "Amazon Web Services",
-    issuedAt: "2024-01-15",
-    credentialUrl: "#",
-    published: true,
-  },
-];
+import { getCertifications, type Certification } from "@/lib/api";
+import apiClient from "@/lib/api-client";
 
 export default function CertificationsPage() {
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [certifications, setCertifications] = useState<Certification[]>([]);
+
+  useEffect(() => {
+    getCertifications()
+      .then((data) => setCertifications(data || []))
+      .catch(() => toast.error("Failed to load certifications"))
+      .finally(() => setIsLoading(false));
+  }, []);
 
   const handleDelete = async (id: string) => {
     if (!confirm("Are you sure you want to delete this certification?")) return;
-    
-    setIsLoading(true);
-    // TODO: Implement delete with API
-    setTimeout(() => {
+
+    try {
+      await apiClient.delete(`/api/certifications/${id}`);
+      setCertifications((prev) => prev.filter((cert) => cert.id !== id));
       toast.success("Certification deleted successfully!");
-      setIsLoading(false);
-    }, 500);
+    } catch (error: any) {
+      const message =
+        error?.response?.data?.error?.message ||
+        error?.response?.data?.message ||
+        "Failed to delete certification.";
+      toast.error(message);
+    }
   };
 
   const handleTogglePublish = async (id: string, currentStatus: boolean) => {
-    setIsLoading(true);
-    // TODO: Implement toggle with API
-    setTimeout(() => {
-      toast.success(`Certification ${currentStatus ? "unpublished" : "published"}!`);
-      setIsLoading(false);
-    }, 500);
+    setCertifications((prev) =>
+      prev.map((cert) =>
+        cert.id === id ? { ...cert, published: !currentStatus } : cert
+      )
+    );
+    toast.success(`Certification ${currentStatus ? "unpublished" : "published"}!`);
   };
 
   if (isLoading) {

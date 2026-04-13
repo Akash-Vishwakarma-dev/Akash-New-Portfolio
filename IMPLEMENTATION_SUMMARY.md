@@ -6,9 +6,9 @@ A **production-grade, full-stack backend** for a professional developer portfoli
 
 ### 🏗️ Architecture & Infrastructure
 
-✅ **Next.js 14 App Router** - Modern, performant backend framework  
+✅ **Next.js 16 App Router** - Modern, performant backend framework  
 ✅ **TypeScript** - Full type safety across the entire codebase  
-✅ **Prisma ORM** - Type-safe database access with PostgreSQL  
+✅ **Prisma ORM** - Type-safe database access with MongoDB  
 ✅ **Modular Structure** - Clean separation of concerns  
 ✅ **Environment Validation** - Zod-based env variable validation  
 
@@ -21,9 +21,12 @@ A **production-grade, full-stack backend** for a professional developer portfoli
 ✅ **Security Headers** - CSRF, XSS, clickjacking protection  
 ✅ **Input Validation** - Zod schemas for all endpoints  
 
-### 📊 Database Schema (11 Entities)
+### 📊 Database Schema (14 Entities)
 
 ✅ **User** - Authentication and role management  
+✅ **Account** - OAuth account mappings  
+✅ **Session** - Database-backed user sessions  
+✅ **VerificationToken** - Auth verification tokens  
 ✅ **Project** - Portfolio projects with tags, metrics, media  
 ✅ **BlogPost** - MDX blog posts with views, reading time  
 ✅ **Research** - Academic papers with citations, DOI  
@@ -76,7 +79,7 @@ A **production-grade, full-stack backend** for a professional developer portfoli
 ✅ **Rate Limiting** - Upstash Redis-based throttling  
   - Public: 10 req/10s  
   - Admin: 100 req/min  
-  - Contact: 3 req/hour  
+  - Contact: 10 req/hour (production), 100 req/hour (development)  
 ✅ **Pagination** - Efficient data fetching with metadata  
 ✅ **Indexed Queries** - Optimized database indexes  
 ✅ **Connection Pooling** - Ready for Prisma Accelerate  
@@ -124,7 +127,8 @@ A **production-grade, full-stack backend** for a professional developer portfoli
 ```
 portfolio-backend/
 ├── prisma/
-│   ├── schema.prisma          # 11 entity models
+│   ├── schema.prisma          # Relational schema snapshot
+│   ├── schema.mongodb.prisma  # Active MongoDB schema
 │   └── seed.ts                # Sample data
 ├── src/
 │   ├── app/
@@ -139,7 +143,7 @@ portfolio-backend/
 **Total Files Created**: 50+  
 **Lines of Code**: ~5,000+  
 **API Endpoints**: 20+  
-**Database Models**: 11  
+**Database Models**: 14  
 
 ## 🚀 Getting Started
 
@@ -198,7 +202,7 @@ This backend is ready to be consumed by:
 - **Upstash Redis** - Rate limiting & caching
 - **Resend** - Email notifications
 - **Vercel** - Hosting & deployment
-- **Supabase/Neon** - PostgreSQL database
+- **MongoDB Atlas** - Managed MongoDB database
 
 ## 📊 API Coverage
 
@@ -244,7 +248,7 @@ While the backend is fully functional, you could add:
 
 Before deploying:
 - [ ] All environment variables configured
-- [ ] Database set up (Supabase/Neon)
+- [ ] Database set up (MongoDB Atlas/self-hosted MongoDB)
 - [ ] R2 bucket created and configured
 - [ ] Redis instance provisioned
 - [ ] OAuth apps configured for production URLs
@@ -296,7 +300,7 @@ See **DEPLOYMENT.md** for complete deployment guide.
     ┌─────────┴─────────┐
     ▼                   ▼
 ┌──────────┐      ┌──────────┐
-│PostgreSQL│      │    R2    │
+│ MongoDB  │      │    R2    │
 │ Database │      │ Storage  │
 └──────────┘      └──────────┘
 ```

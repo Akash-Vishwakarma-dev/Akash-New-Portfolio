@@ -41,13 +41,18 @@ export const adminRateLimit = redis
     })
   : null;
 
-// Contact form: 3 submissions per hour
+// Contact form:
+// - Development: generous limit for testing
+// - Production: conservative limit to reduce abuse
 export const contactRateLimit = redis
   ? new Ratelimit({
       redis,
-      limiter: Ratelimit.slidingWindow(3, "1 h"),
+      limiter:
+        env.NODE_ENV === "development"
+          ? Ratelimit.slidingWindow(100, "1 h")
+          : Ratelimit.slidingWindow(10, "1 h"),
       analytics: true,
-      prefix: "@ratelimit/contact",
+      prefix: "@ratelimit/contact-v2",
     })
   : null;
 

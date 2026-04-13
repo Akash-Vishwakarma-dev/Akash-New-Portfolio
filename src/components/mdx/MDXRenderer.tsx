@@ -51,7 +51,7 @@ export function MDXRenderer({ content, className = "" }: MDXRendererProps) {
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className={`prose prose-lg dark:prose-invert max-w-none ${className}`}
+      className={`prose prose-lg dark:prose-invert max-w-none break-words [&_*]:max-w-full [&_pre]:overflow-x-auto ${className}`}
       dangerouslySetInnerHTML={renderContent()}
     />
   );

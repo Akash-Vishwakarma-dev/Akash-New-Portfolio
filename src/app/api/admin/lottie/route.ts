@@ -28,7 +28,13 @@ export async function POST(request: NextRequest) {
 
     // Create animation
     const animation = await prisma.lottieAnimation.create({
-      data: animationData,
+      data: {
+        name: animationData.name,
+        slug: animationData.name,
+        jsonUrl: animationData.jsonUrl,
+        description: animationData.description,
+        category: animationData.category,
+      },
     });
 
     return successResponse(animation);

@@ -164,14 +164,14 @@ export default function BlogPostPage() {
           {/* Content */}
           <Section>
             <div className="container mx-auto max-w-4xl px-4">
-              <div className="grid gap-12 lg:grid-cols-4">
+              <div className="grid gap-12 lg:grid-cols-4 lg:items-start">
                 {/* Main Content */}
-                <div className="lg:col-span-3">
+                <div className="min-w-0 lg:col-span-3">
                   <MDXRenderer content={post.content} />
                 </div>
 
                 {/* Sidebar - Table of Contents (placeholder) */}
-                <div className="lg:col-span-1">
+                <div className="min-w-0 lg:col-span-1">
                   <div className="sticky top-24 space-y-4">
                     <Card className="p-4">
                       <h3 className="mb-4 font-semibold">On This Page</h3>

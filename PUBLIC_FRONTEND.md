@@ -1,6 +1,6 @@
 # Akash Vishwakarma - Portfolio Frontend
 
-> A cutting-edge, production-ready portfolio website built with Next.js 14, featuring advanced cursor interactions, scroll-linked SVG morphing, Lottie animations, and seamless dark/light mode theming.
+> A cutting-edge, production-ready portfolio website built with Next.js 16, featuring advanced cursor interactions, scroll-linked SVG morphing, Lottie animations, and seamless dark/light mode theming.
 
 ## ✨ Features
 
@@ -13,7 +13,7 @@
 - **Smooth Scrolling**: Optional Lenis integration for buttery-smooth scroll
 
 ### 🚀 **Performance & SEO**
-- **Next.js 14 App Router**: Server & client components for optimal performance
+- **Next.js 16 App Router**: Server & client components for optimal performance
 - **TypeScript Strict Mode**: Type-safe codebase
 - **SEO Optimized**: next-seo with OpenGraph, Twitter Cards, structured data
 - **Image Optimization**: Next/Image for automatic optimization
@@ -41,7 +41,7 @@
 
 | Category | Technologies |
 |----------|-------------|
-| **Framework** | Next.js 14 (App Router), React 18, TypeScript |
+| **Framework** | Next.js 16 (App Router), React 19, TypeScript |
 | **Styling** | Tailwind CSS, shadcn/ui components, CSS Variables |
 | **Animations** | Framer Motion, Lottie React, Flubber (SVG morph), Lenis |
 | **Forms** | React Hook Form, Zod validation |

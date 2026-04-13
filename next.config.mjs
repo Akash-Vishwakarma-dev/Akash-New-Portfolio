@@ -29,15 +29,11 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "**.r2.cloudflarestorage.com",
+        hostname: "**",
       },
       {
-        protocol: "https",
-        hostname: "avatars.githubusercontent.com",
-      },
-      {
-        protocol: "https",
-        hostname: "lh3.googleusercontent.com",
+        protocol: "http",
+        hostname: "**",
       },
     ],
   },

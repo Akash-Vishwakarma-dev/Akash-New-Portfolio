@@ -9,7 +9,7 @@ import { checkRateLimit, getClientIdentifier, publicRateLimit } from "@/lib/rate
  */
 export async function GET(
   request: NextRequest,
-  { params }: { params: { name: string } }
+  { params }: { params: Promise<{ name: string }> }
 ) {
   try {
     // Rate limiting
@@ -19,7 +19,7 @@ export async function GET(
       return rateLimitResult.response;
     }
 
-    const { name } = params;
+    const { name } = await params;
 
     const animation = await prisma.lottieAnimation.findUnique({
       where: { name },

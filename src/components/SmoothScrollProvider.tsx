@@ -61,7 +61,7 @@ export function scrollTo(target: string | number, options?: { offset?: number; d
   if (typeof window === "undefined") return;
 
   const lenis = (window as any).lenis;
-  if (!lenis) {
+  if (!lenis || typeof lenis.scrollTo !== "function") {
     // Fallback to native scroll
     if (typeof target === "string") {
       const element = document.querySelector(target);

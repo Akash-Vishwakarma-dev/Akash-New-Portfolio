@@ -8,9 +8,9 @@ import { updateProjectSchema } from "@/lib/validations";
  * PATCH /api/admin/projects/[id]
  * Update a project (admin only)
  */
-export async function PATCH(
+async function updateProjectHandler(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     // Rate limiting
@@ -20,7 +20,7 @@ export async function PATCH(
       return rateLimitResult.response;
     }
 
-    const { id } = params;
+    const { id } = await params;
 
     // Parse and validate request body
     const parseResult = await parseRequestBody(request, updateProjectSchema);
@@ -72,13 +72,31 @@ export async function PATCH(
   }
 }
 
+export async function PATCH(
+  request: NextRequest,
+  context: { params: Promise<{ id: string }> }
+) {
+  return updateProjectHandler(request, context);
+}
+
+/**
+ * PUT /api/admin/projects/[id]
+ * Backward-compatible update handler
+ */
+export async function PUT(
+  request: NextRequest,
+  context: { params: Promise<{ id: string }> }
+) {
+  return updateProjectHandler(request, context);
+}
+
 /**
  * DELETE /api/admin/projects/[id]
  * Delete a project (admin only)
  */
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     // Rate limiting
@@ -88,7 +106,27 @@ export async function DELETE(
       return rateLimitResult.response;
     }
 
-    const { id } = params;
+    const { id } = await params;
+
+    // Check if project exists before deleting
+    const existing = await prisma.project.findUnique({
+      where: { id },
+      select: { id: true },
+    });
+
+    if (!existing) {
+      return errorResponse("Project not found", 404, "NOT_FOUND");
+    }
+
+    // Clear tag relations before delete to avoid relation constraint failures.
+    await prisma.project.update({
+      where: { id },
+      data: {
+        tags: {
+          set: [],
+        },
+      },
+    });
 
     // Delete project
     await prisma.project.delete({

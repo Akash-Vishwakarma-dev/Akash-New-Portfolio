@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { motion } from "framer-motion";
-import { ArrowRight, Download, Github, Linkedin, Mail, Code2, Zap, Users, Target, Award, Trophy, Calendar, ExternalLink } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { ArrowRight, Github, Linkedin, Mail, Code2, Zap, Users, Target, Award, Trophy, Calendar, ExternalLink, Image as ImageIcon, Play, Maximize2, X } from "lucide-react";
 import Lottie from "lottie-react";
 import { MorphBlob } from "@/components/fx/MorphBlob";
 import { ParallaxContainer } from "@/components/fx/ParallaxContainer";
@@ -16,25 +16,44 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { LoaderOverlay } from "@/components/LoaderOverlay";
-import { getProjects, getBlogPosts, getResearch, getAchievements, getCertifications } from "@/lib/api";
+import { getProjects, getBlogPosts, getResearch, getAchievements, getCertifications, getGallery } from "@/lib/api";
 import { scrollTo } from "@/components/SmoothScrollProvider";
-import type { Project, BlogPost, Research, Achievement, Certification } from "@/lib/api";
+import type { Project, BlogPost, Research, Achievement, Certification, MediaItem } from "@/lib/api";
 import { TechIcon, TechBadge } from "@/components/TechIcon";
 import { formatDate } from "@/lib/utils";
 import Image from "next/image";
 
 const skills = [
   "Python",
+  "Machine Learning",
+  "Deep Learning",
   "TensorFlow",
   "PyTorch",
+  "OpenAI",
+  "Java",
+  "AWS",
+  "Google Cloud",
+  "Azure",
+  "Kubernetes",
+  "HTML",
+  "CSS",
+  "JavaScript",
+  "FastAPI",
+  "Flask",
+  "Express.js",
+  "Socket.IO",
   "React",
   "Next.js",
   "TypeScript",
   "Node.js",
   "MongoDB",
   "PostgreSQL",
+  "Prisma",
+  "Redis",
+  "GraphQL",
   "Docker",
-  "AWS",
+  "Git",
+  "GitHub",
   "Tailwind CSS",
 ];
 
@@ -67,8 +86,15 @@ export default function HomePage() {
   const [research, setResearch] = useState<Research[]>([]);
   const [achievements, setAchievements] = useState<Achievement[]>([]);
   const [certifications, setCertifications] = useState<Certification[]>([]);
+  const [galleryItems, setGalleryItems] = useState<MediaItem[]>([]);
+  const [selectedGalleryImage, setSelectedGalleryImage] = useState<MediaItem | null>(null);
   const [loading, setLoading] = useState(true);
   const [heroAnimation, setHeroAnimation] = useState<any>(null);
+
+  const isVideoItem = (item: MediaItem) => {
+    if (item.type === "video") return true;
+    return /\.(mp4|webm|ogg|mov)(\?.*)?$/i.test(item.url);
+  };
 
   useEffect(() => {
     // Load Lottie hero animation
@@ -84,15 +110,24 @@ export default function HomePage() {
       getResearch().catch(() => []),
       getAchievements({ published: true }).catch(() => []),
       getCertifications().catch(() => []),
+      getGallery().catch(() => []),
     ])
       .then((results) => {
-        const [projectsResult, postsResult, researchResult, achievementsResult, certificationsResult] = results;
+        const [
+          projectsResult,
+          postsResult,
+          researchResult,
+          achievementsResult,
+          certificationsResult,
+          galleryResult,
+        ] = results;
         
         setProjects(projectsResult.status === 'fulfilled' ? projectsResult.value : []);
         setPosts(postsResult.status === 'fulfilled' ? postsResult.value : []);
         setResearch(researchResult.status === 'fulfilled' ? researchResult.value : []);
         setAchievements(achievementsResult.status === 'fulfilled' ? achievementsResult.value : []);
         setCertifications(certificationsResult.status === 'fulfilled' ? certificationsResult.value : []);
+        setGalleryItems(galleryResult.status === 'fulfilled' ? galleryResult.value : []);
       })
       .catch((err) => {
         console.error("Failed to load homepage data:", err);
@@ -118,11 +153,7 @@ export default function HomePage() {
 
         {/* Morphing Blob */}
         <div className="absolute right-0 top-0 -z-10 h-full w-1/2 opacity-40">
-          <MorphBlob
-            width={800}
-            height={800}
-            fillClassName="fill-primary/30 dark:fill-primary/20"
-          />
+          <MorphBlob className="h-full w-full" />
         </div>
 
         {/* Floating Elements */}
@@ -275,7 +306,8 @@ export default function HomePage() {
                 transition={{ delay: 0.6 }}
               >
                 <MagneticButton intensity={0.4}>
-                  <Button size="lg" className="group relative overflow-hidden shadow-lg" onClick={() => scrollTo("#projects", { duration: 1.5 })}>
+                  <Button size="lg" className="group relative overflow-hidden shadow-lg" asChild>
+                    <Link href="/projects">
                     <span className="relative z-10 flex items-center">
                       View Projects
                       <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
@@ -286,13 +318,16 @@ export default function HomePage() {
                       whileHover={{ scale: 1, opacity: 0.1 }}
                       transition={{ duration: 0.3 }}
                     />
+                    </Link>
                   </Button>
                 </MagneticButton>
 
                 <MagneticButton intensity={0.4}>
-                  <Button size="lg" variant="outline" className="group shadow-lg backdrop-blur-sm" onClick={() => scrollTo("#contact", { duration: 1.5 })}>
-                    <Mail className="mr-2 h-5 w-5" />
-                    Contact
+                  <Button size="lg" variant="outline" className="group shadow-lg backdrop-blur-sm" asChild>
+                    <Link href="/contact">
+                      <Mail className="mr-2 h-5 w-5" />
+                      Contact
+                    </Link>
                   </Button>
                 </MagneticButton>
               </motion.div>
@@ -531,16 +566,52 @@ export default function HomePage() {
             >
               <ParallaxContainer speed={0.2}>
                 <div className="relative aspect-square overflow-hidden rounded-2xl bg-gradient-to-br from-primary/20 to-primary/5">
-                  <div className="flex h-full items-center justify-center">
-                    <div className="text-center">
-                      <div className="mb-4 text-6xl">👨‍💻</div>
-                      <p className="text-muted-foreground">Professional Photo</p>
-                    </div>
-                  </div>
+                  <Image
+                    src="/images/Photo.jpg"
+                    alt="Akash Vishwakarma professional photo"
+                    fill
+                    priority
+                    sizes="(max-width: 1024px) 100vw, 50vw"
+                    className="object-cover"
+                  />
                 </div>
               </ParallaxContainer>
             </motion.div>
           </div>
+        </div>
+      </Section>
+
+      {/* Resume */}
+      <Section className="bg-card/50" id="resume">
+        <div className="container mx-auto max-w-4xl px-4">
+          <Card className="overflow-hidden border-primary/20">
+            <CardContent className="p-8 md:p-10">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                className="text-center"
+              >
+                <h2 className="mb-3 font-heading text-3xl font-bold md:text-4xl">
+                  Resume
+                </h2>
+                <p className="mx-auto mb-6 max-w-2xl text-muted-foreground">
+                  View my latest resume to explore my experience, projects, and technical skills.
+                </p>
+
+                  <div className="flex justify-center">
+                    <MagneticButton>
+                      <Button size="lg" asChild>
+                        <Link href="/resume">
+                          <ArrowRight className="mr-2 h-4 w-4" />
+                          View Resume
+                        </Link>
+                      </Button>
+                    </MagneticButton>
+                  </div>
+              </motion.div>
+            </CardContent>
+          </Card>
         </div>
       </Section>
 
@@ -642,6 +713,99 @@ export default function HomePage() {
               {projects.map((project, index) => (
                 <ProjectCard key={project.id} project={project} index={index} />
               ))}
+            </div>
+          </div>
+        </Section>
+      )}
+
+      {/* Gallery */}
+      {galleryItems.length > 0 && (
+        <Section id="gallery">
+          <div className="container mx-auto px-4">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="mb-12 text-center"
+            >
+              <div className="mb-6 inline-flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
+                <ImageIcon className="h-8 w-8 text-primary" />
+              </div>
+              <h2 className="mb-4 font-heading text-4xl font-bold">
+                Gallery
+              </h2>
+              <p className="mx-auto max-w-2xl text-muted-foreground">
+                Selected visuals from my work, demos, and professional journey.
+              </p>
+            </motion.div>
+
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {galleryItems.slice(0, 6).map((item, index) => (
+                <motion.div
+                  key={item.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.08 }}
+                >
+                  <Card className="group overflow-hidden">
+                    <div className="relative aspect-video bg-muted">
+                      {isVideoItem(item) ? (
+                        <>
+                          <video
+                            src={item.url}
+                            className="h-full w-full object-cover"
+                            controls
+                            muted
+                            loop
+                            autoPlay
+                            playsInline
+                            preload="metadata"
+                          />
+                          <div className="absolute inset-0 flex items-center justify-center bg-black/20 opacity-90 transition-opacity group-hover:opacity-100">
+                            <Play className="h-10 w-10 text-white" />
+                          </div>
+                        </>
+                      ) : (
+                        <img
+                          src={item.url}
+                          alt={item.caption || "Gallery media"}
+                          className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                          loading="lazy"
+                          referrerPolicy="no-referrer"
+                        />
+                      )}
+
+                      {!isVideoItem(item) && (
+                        <button
+                          type="button"
+                          onClick={() => setSelectedGalleryImage(item)}
+                          className="absolute bottom-3 right-3 inline-flex items-center gap-1 rounded-md bg-black/70 px-2.5 py-1.5 text-xs font-medium text-white transition-colors hover:bg-black/85"
+                        >
+                          <Maximize2 className="h-3.5 w-3.5" />
+                          Fullscreen
+                        </button>
+                      )}
+                    </div>
+                    {item.caption && (
+                      <CardContent className="p-4">
+                        <p className="line-clamp-2 text-sm text-muted-foreground">{item.caption}</p>
+                      </CardContent>
+                    )}
+                  </Card>
+                </motion.div>
+              ))}
+            </div>
+
+            <div className="mt-8 text-center">
+              <MagneticButton>
+                <Button asChild variant="outline" size="lg">
+                  <Link href="/gallery">
+                    Explore Full Gallery
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </Link>
+                </Button>
+              </MagneticButton>
             </div>
           </div>
         </Section>
@@ -854,6 +1018,45 @@ export default function HomePage() {
           </div>
         </Section>
       )}
+
+      {/* Gallery Image Fullscreen */}
+      <AnimatePresence>
+        {selectedGalleryImage && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4"
+            onClick={() => setSelectedGalleryImage(null)}
+          >
+            <button
+              type="button"
+              className="absolute right-4 top-4 z-10 rounded-full bg-white/10 p-2 text-white backdrop-blur-sm transition-colors hover:bg-white/20"
+              onClick={() => setSelectedGalleryImage(null)}
+            >
+              <X className="h-6 w-6" />
+            </button>
+
+            <motion.div
+              initial={{ scale: 0.96, opacity: 0.9 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.96, opacity: 0.9 }}
+              className="relative max-h-[92vh] max-w-[92vw]"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <img
+                src={selectedGalleryImage.url}
+                alt={selectedGalleryImage.caption || "Gallery image"}
+                className="h-auto max-h-[88vh] w-auto max-w-[92vw] rounded-md object-contain"
+                referrerPolicy="no-referrer"
+              />
+              {selectedGalleryImage.caption && (
+                <p className="mt-3 text-center text-sm text-white/80">{selectedGalleryImage.caption}</p>
+              )}
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Contact Section */}
       <Section id="contact">

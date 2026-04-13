@@ -1,8 +1,8 @@
 "use client";
 
 import { motion } from "framer-motion";
-import Image from "next/image";
 import Link from "next/link";
+import Image from "next/image";
 import { Code2, Zap, Users, Target } from "lucide-react";
 import { Section } from "@/components/Section";
 import { Card } from "@/components/ui/card";
@@ -107,10 +107,10 @@ export default function AboutPage() {
                 <div className="relative aspect-square overflow-hidden rounded-2xl bg-gradient-to-br from-primary/20 to-primary/5">
                   <Image
                     src="/images/Photo.jpg"
-                    alt="Akash Vishwakarma profile photo"
+                    alt="Akash Vishwakarma professional photo"
                     fill
                     priority
-                    sizes="(min-width: 1024px) 40vw, 80vw"
+                    sizes="(max-width: 1024px) 100vw, 50vw"
                     className="object-cover"
                   />
                 </div>

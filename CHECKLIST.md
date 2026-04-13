@@ -20,7 +20,7 @@ Use this checklist to verify your Portfolio Backend is correctly set up and work
 
 ## ✅ Database Setup
 
-- [ ] Database created (PostgreSQL/Supabase/Neon)
+- [ ] Database created (MongoDB Atlas/self-hosted MongoDB)
 - [ ] `DATABASE_URL` set correctly in `.env`
 - [ ] Prisma Client generated (`pnpm db:generate`)
 - [ ] Schema pushed to database (`pnpm db:push`)
@@ -249,7 +249,7 @@ See DEPLOYMENT.md for full guide. Summary:
 
 - [ ] All tests passing
 - [ ] Environment variables set in Vercel
-- [ ] Database created (Supabase/Neon)
+- [ ] Database created (MongoDB Atlas/self-hosted MongoDB)
 - [ ] R2 bucket configured
 - [ ] Redis instance configured
 - [ ] OAuth apps configured for production URLs

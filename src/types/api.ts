@@ -62,6 +62,7 @@ export interface ProjectData {
   stack: string[];
   repoUrl?: string;
   liveUrl?: string;
+  paperUrl?: string;
   coverImageUrl?: string;
   metrics?: Record<string, number>;
   published: boolean;
@@ -74,9 +75,10 @@ export interface ProjectData {
 export interface BlogPostData {
   slug: string;
   title: string;
-  summary: string;
+  excerpt: string;
   content: string;
   coverImageUrl?: string;
+  readTime?: number;
   published: boolean;
   featured: boolean;
   publishedAt?: string;

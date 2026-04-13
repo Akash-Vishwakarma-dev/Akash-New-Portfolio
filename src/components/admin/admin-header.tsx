@@ -8,6 +8,19 @@ import { LogOut, User } from "lucide-react";
 export function AdminHeader() {
   const { data: session } = useSession();
 
+  const handleSignOut = async () => {
+    try {
+      await fetch("/api/admin/2fa/reset", {
+        method: "POST",
+        credentials: "include",
+      });
+    } catch {
+      // Continue sign-out even if cookie reset fails.
+    }
+
+    await signOut({ callbackUrl: "/" });
+  };
+
   return (
     <header className="fixed left-64 right-0 top-0 z-30 h-16 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="flex h-full items-center justify-between px-6">
@@ -25,7 +38,7 @@ export function AdminHeader() {
               <Button
                 variant="ghost"
                 size="icon"
-                onClick={() => signOut({ callbackUrl: "/" })}
+                onClick={handleSignOut}
                 title="Sign out"
               >
                 <LogOut className="h-5 w-5" />

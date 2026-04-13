@@ -73,7 +73,7 @@
 **Features to Test:**
 - [ ] Hero section loads
 - [ ] Skills section with colorful tech icons/badges
-- [ ] 12 tech skills (Python, TensorFlow, PyTorch, React, Next.js, TypeScript, Node.js, MongoDB, PostgreSQL, Docker, AWS, Tailwind)
+- [ ] Expanded AI/ML + web/cloud skills render (includes Python, TensorFlow, PyTorch, Java, AWS, Google Cloud, Azure, React, Next.js, TypeScript, Node.js, Express.js, Socket.IO, MongoDB, Docker, Tailwind)
 - [ ] Values cards (4 cards)
 - [ ] Timeline section
 - [ ] CTA buttons work
@@ -169,7 +169,8 @@
 - [ ] Tailwind CSS (cyan #06B6D4)
 - [ ] Docker (blue #2496ED)
 - [ ] AWS (orange #FF9900)
-- [ ] PostgreSQL (blue #4169E1)
+- [ ] Google Cloud (blue #4285F4)
+- [ ] Azure (blue #0078D4)
 
 ### Lottie Animations
 - [ ] LoaderOverlay on data fetching pages

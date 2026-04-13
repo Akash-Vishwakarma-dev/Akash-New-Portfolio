@@ -1,12 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { LottieLoader } from "@/components/admin/lottie-loader";
 import { Plus, Edit, Trash2, Upload, Download, Play } from "lucide-react";
 import { toast } from "sonner";
 import Link from "next/link";
+import Lottie from "lottie-react";
 
 // Temporary mock data
 const animations = [
@@ -27,9 +28,33 @@ const animations = [
     createdAt: "2024-01-15",
   },
   {
+    id: "loader-default",
+    name: "Loader (Default)",
+    fileName: "loader.json",
+    category: "Loaders",
+    size: "12.4 KB",
+    createdAt: "2024-01-15",
+  },
+  {
     id: "success-light",
     name: "Success (Light)",
     fileName: "success-light.json",
+    category: "Status",
+    size: "8.7 KB",
+    createdAt: "2024-01-15",
+  },
+  {
+    id: "success-dark",
+    name: "Success (Dark)",
+    fileName: "success-dark.json",
+    category: "Status",
+    size: "8.8 KB",
+    createdAt: "2024-01-15",
+  },
+  {
+    id: "success-default",
+    name: "Success (Default)",
+    fileName: "success.json",
     category: "Status",
     size: "8.7 KB",
     createdAt: "2024-01-15",
@@ -42,7 +67,88 @@ const animations = [
     size: "9.2 KB",
     createdAt: "2024-01-15",
   },
+  {
+    id: "error-dark",
+    name: "Error (Dark)",
+    fileName: "error-dark.json",
+    category: "Status",
+    size: "9.3 KB",
+    createdAt: "2024-01-15",
+  },
+  {
+    id: "error-default",
+    name: "Error (Default)",
+    fileName: "error.json",
+    category: "Status",
+    size: "9.2 KB",
+    createdAt: "2024-01-15",
+  },
+  {
+    id: "toggle-light",
+    name: "Toggle (Light)",
+    fileName: "toggle-light.json",
+    category: "Theme",
+    size: "6.1 KB",
+    createdAt: "2024-01-15",
+  },
+  {
+    id: "toggle-dark",
+    name: "Toggle (Dark)",
+    fileName: "toggle-dark.json",
+    category: "Theme",
+    size: "6.0 KB",
+    createdAt: "2024-01-15",
+  },
+  {
+    id: "hero-accent",
+    name: "Hero Accent",
+    fileName: "hero-accent.json",
+    category: "Hero",
+    size: "20.0 KB",
+    createdAt: "2024-01-15",
+  },
 ];
+
+function LottiePreview({ fileName, title }: { fileName: string; title: string }) {
+  const [animationData, setAnimationData] = useState<unknown>(null);
+  const [failed, setFailed] = useState(false);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    fetch(`/animations/${fileName}`)
+      .then((res) => {
+        if (!res.ok) throw new Error("Animation not found");
+        return res.json();
+      })
+      .then((json) => {
+        if (isMounted) {
+          setAnimationData(json);
+          setFailed(false);
+        }
+      })
+      .catch(() => {
+        if (isMounted) {
+          setAnimationData(null);
+          setFailed(true);
+        }
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, [fileName]);
+
+  if (failed || !animationData) {
+    return (
+      <div className="flex h-full items-center justify-center" title={title}>
+        <Play className="h-12 w-12 text-muted-foreground" />
+      </div>
+    );
+  }
+
+  return <Lottie animationData={animationData as object} loop autoplay />;
+}
 
 export default function AnimationsPage() {
   const [isLoading, setIsLoading] = useState(false);
@@ -62,7 +168,18 @@ export default function AnimationsPage() {
   };
 
   const handleDownload = (fileName: string) => {
-    toast.success(`Downloading ${fileName}...`);
+    try {
+      const link = document.createElement("a");
+      link.href = `/animations/${fileName}`;
+      link.download = fileName;
+      link.rel = "noopener noreferrer";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      toast.success(`Downloading ${fileName}...`);
+    } catch {
+      toast.error("Failed to start download.");
+    }
   };
 
   if (isLoading) {
@@ -109,9 +226,7 @@ export default function AnimationsPage() {
               </CardHeader>
               <CardContent className="space-y-3">
                 <div className="relative aspect-square overflow-hidden rounded-md bg-muted/50 border">
-                  <div className="flex h-full items-center justify-center">
-                    <Play className="h-12 w-12 text-muted-foreground" />
-                  </div>
+                  <LottiePreview fileName={animation.fileName} title={animation.name} />
                 </div>
                 <div className="space-y-1 text-sm">
                   <p className="text-muted-foreground">

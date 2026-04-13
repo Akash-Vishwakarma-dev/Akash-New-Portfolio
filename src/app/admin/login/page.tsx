@@ -6,6 +6,19 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Github } from "lucide-react";
 
 export default function LoginPage() {
+  const startSignIn = async (provider: "github" | "google") => {
+    try {
+      await fetch("/api/admin/2fa/reset", {
+        method: "POST",
+        credentials: "include",
+      });
+    } catch {
+      // Continue sign-in even if cookie reset fails.
+    }
+
+    await signIn(provider, { callbackUrl: "/admin/dashboard" });
+  };
+
   return (
     <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-950 dark:to-slate-900">
       <Card className="w-full max-w-md">
@@ -15,7 +28,7 @@ export default function LoginPage() {
         </CardHeader>
         <CardContent className="space-y-4">
           <Button
-            onClick={() => signIn("github", { callbackUrl: "/admin/dashboard" })}
+            onClick={() => startSignIn("github")}
             className="w-full"
             size="lg"
           >
@@ -33,7 +46,7 @@ export default function LoginPage() {
           </div>
 
           <Button
-            onClick={() => signIn("google", { callbackUrl: "/admin/dashboard" })}
+            onClick={() => startSignIn("google")}
             variant="outline"
             className="w-full"
             size="lg"

@@ -18,7 +18,7 @@ export async function POST(request: NextRequest) {
     const { tagIds, readingTime: providedReadingTime, publishedAt, ...postData } = parseResult.data;
 
     // Calculate reading time if not provided
-    const readingTime = providedReadingTime || calculateReadingTime(postData.content);
+    const readTime = providedReadingTime || calculateReadingTime(postData.content);
 
     // Check if slug already exists
     const existing = await prisma.blogPost.findUnique({
@@ -33,7 +33,7 @@ export async function POST(request: NextRequest) {
     const post = await prisma.blogPost.create({
       data: {
         ...postData,
-        readingTime,
+        readTime,
         publishedAt: publishedAt ? new Date(publishedAt) : null,
         ...(tagIds && {
           tags: {

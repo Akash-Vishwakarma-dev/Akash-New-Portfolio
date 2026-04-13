@@ -1,43 +1,130 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { LottieLoader } from "@/components/admin/lottie-loader";
 import { Plus, Edit, Trash2, Eye, EyeOff } from "lucide-react";
 import { toast } from "sonner";
 import Link from "next/link";
+import apiClient from "@/lib/api-client";
+import type { Achievement } from "@/lib/api";
 
-// Temporary mock data
-const achievements = [
-  {
-    id: "1",
-    title: "First Place - Hackathon 2024",
-    category: "Hackathon",
-    achievedAt: "2024-06-15",
-    published: true,
-  },
-];
+type AchievementListItem = Pick<Achievement, "id" | "title" | "category" | "achievedAt" | "published">;
+
+interface RawAchievementResponse {
+  id?: string;
+  _id?: string;
+  title?: string;
+  category?: string;
+  achievedAt?: string;
+  published?: boolean;
+}
 
 export default function AchievementsPage() {
   const [isLoading, setIsLoading] = useState(false);
+  const [achievements, setAchievements] = useState<AchievementListItem[]>([]);
+
+  const fetchAchievements = async () => {
+    setIsLoading(true);
+    try {
+      const response = await apiClient.get("/api/achievements");
+      const rawItems = (response.data?.data || response.data || []) as RawAchievementResponse[];
+      const items: AchievementListItem[] = rawItems
+        .map((item) => ({
+          id: item.id || item._id || "",
+          title: item.title || "Untitled",
+          category: item.category || "General",
+          achievedAt: item.achievedAt || new Date().toISOString(),
+          published: !!item.published,
+        }))
+        .filter((item) => item.id);
+      setAchievements(items);
+    } catch (error: any) {
+      const message =
+        error?.response?.data?.error?.message ||
+        error?.response?.data?.message ||
+        "Failed to load achievements.";
+      toast.error(message);
+      setAchievements([]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchAchievements();
+  }, []);
 
   const handleDelete = async (id: string) => {
     if (!confirm("Are you sure you want to delete this achievement?")) return;
-    
+
     setIsLoading(true);
-    setTimeout(() => {
-      toast.success("Achievement deleted successfully!");
+    try {
+      await apiClient.delete(`/api/achievements/${id}`);
+      const response = await apiClient.get("/api/achievements");
+      const latest = (response.data?.data || response.data || []) as RawAchievementResponse[];
+      const stillExists = latest.some((item) => (item.id || item._id) === id);
+
+      if (stillExists) {
+        toast.error("Delete could not be confirmed. Please try again.");
+      } else {
+        toast.success("Achievement deleted successfully!");
+      }
+
+      setAchievements(
+        latest
+          .map((item) => ({
+            id: item.id || item._id || "",
+            title: item.title || "Untitled",
+            category: item.category || "General",
+            achievedAt: item.achievedAt || new Date().toISOString(),
+            published: !!item.published,
+          }))
+          .filter((item) => item.id)
+      );
+    } catch (error: any) {
+      const message =
+        error?.response?.data?.error?.message ||
+        error?.response?.data?.message ||
+        "Failed to delete achievement.";
+      toast.error(message);
+    } finally {
       setIsLoading(false);
-    }, 500);
+    }
   };
 
   const handleTogglePublish = async (id: string, currentStatus: boolean) => {
     setIsLoading(true);
-    setTimeout(() => {
-      toast.success(`Achievement ${currentStatus ? "unpublished" : "published"}!`);
+    try {
+      await apiClient.patch(`/api/achievements/${id}`, {
+        published: !currentStatus,
+      });
+      const refreshed = await apiClient.get("/api/achievements");
+      const latest = (refreshed.data?.data || refreshed.data || []) as RawAchievementResponse[];
+      const normalized = latest
+        .map((item) => ({
+          id: item.id || item._id || "",
+          title: item.title || "Untitled",
+          category: item.category || "General",
+          achievedAt: item.achievedAt || new Date().toISOString(),
+          published: !!item.published,
+        }))
+        .filter((item) => item.id);
+
+      setAchievements(normalized);
+      const target = normalized.find((achievement) => achievement.id === id);
+      const savedStatus = !!target?.published;
+      toast.success(`Achievement ${savedStatus ? "published" : "unpublished"}!`);
+    } catch (error: any) {
+      const message =
+        error?.response?.data?.error?.message ||
+        error?.response?.data?.message ||
+        "Failed to update achievement status.";
+      toast.error(message);
+    } finally {
       setIsLoading(false);
-    }, 500);
+    }
   };
 
   if (isLoading) {

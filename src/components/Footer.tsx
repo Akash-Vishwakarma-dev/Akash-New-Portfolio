@@ -14,13 +14,13 @@ const socialLinks = [
 ];
 
 const footerLinks = [
-  { href: "#about", label: "About", isAnchor: true },
-  { href: "#skills", label: "Skills", isAnchor: true },
-  { href: "#projects", label: "Projects", isAnchor: true },
-  { href: "#certifications", label: "Certifications", isAnchor: true },
-  { href: "#achievements", label: "Achievements", isAnchor: true },
-  { href: "#blog", label: "Blog", isAnchor: true },
-  { href: "#research", label: "Research", isAnchor: true },
+  { href: "/#about", label: "About", isAnchor: true },
+  { href: "/#skills", label: "Skills", isAnchor: true },
+  { href: "/#projects", label: "Projects", isAnchor: true },
+  { href: "/#certifications", label: "Certifications", isAnchor: true },
+  { href: "/#achievements", label: "Achievements", isAnchor: true },
+  { href: "/#blog", label: "Blog", isAnchor: true },
+  { href: "/#research", label: "Research", isAnchor: true },
   { href: "/gallery", label: "Gallery", isAnchor: false },
   { href: "/resume", label: "Resume", isAnchor: false },
 ];
