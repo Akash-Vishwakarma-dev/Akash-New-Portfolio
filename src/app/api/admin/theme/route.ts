@@ -26,14 +26,14 @@ export async function PATCH(request: NextRequest) {
     // Upsert theme preference
     const preference = await prisma.themePreference.upsert({
       where: { userId: session.user.id },
-      update: { mode },
+      update: { theme: mode },
       create: {
         userId: session.user.id,
-        mode,
+        theme: mode,
       },
     });
 
-    return successResponse({ mode: preference.mode });
+    return successResponse({ mode: preference.theme });
   } catch (error) {
     return handleApiError(error);
   }
