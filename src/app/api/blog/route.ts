@@ -17,6 +17,8 @@ export async function GET(request: NextRequest) {
     }
 
     const { page, limit, published, featured, tag, search } = parseResult.data;
+    const currentPage = page ?? 1;
+    const pageSize = limit ?? 10;
 
     // Build where clause
     const where: {
@@ -70,11 +72,11 @@ export async function GET(request: NextRequest) {
         },
       },
       orderBy: [{ featured: "desc" }, { publishedAt: "desc" }, { createdAt: "desc" }],
-      skip: (page - 1) * limit,
-      take: limit,
+      skip: (currentPage - 1) * pageSize,
+      take: pageSize,
     });
 
-    return successResponse(posts, calculatePaginationMeta(total, page, limit));
+    return successResponse(posts, calculatePaginationMeta(total, currentPage, pageSize));
   } catch (error) {
     return handleApiError(error);
   }
