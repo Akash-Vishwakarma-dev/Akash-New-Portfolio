@@ -22,7 +22,7 @@ export async function GET(request: NextRequest) {
     });
 
     return successResponse({
-      mode: preference?.mode || "LIGHT",
+      mode: preference?.theme || "LIGHT",
     });
   } catch (error) {
     return handleApiError(error);

@@ -11,16 +11,26 @@ export class R2Storage {
   private publicUrl: string;
 
   constructor() {
+    const endpoint = env.R2_ENDPOINT;
+    const accessKeyId = env.R2_ACCESS_KEY;
+    const secretAccessKey = env.R2_SECRET_KEY;
+    const bucket = env.R2_BUCKET;
+    const publicUrl = env.R2_PUBLIC_URL;
+
+    if (!endpoint || !accessKeyId || !secretAccessKey || !bucket || !publicUrl) {
+      throw new Error("Missing required R2 environment variables");
+    }
+
     this.client = new S3Client({
       region: "auto",
-      endpoint: env.R2_ENDPOINT,
+      endpoint,
       credentials: {
-        accessKeyId: env.R2_ACCESS_KEY,
-        secretAccessKey: env.R2_SECRET_KEY,
+        accessKeyId,
+        secretAccessKey,
       },
     });
-    this.bucket = env.R2_BUCKET;
-    this.publicUrl = env.R2_PUBLIC_URL;
+    this.bucket = bucket;
+    this.publicUrl = publicUrl;
   }
 
   /**

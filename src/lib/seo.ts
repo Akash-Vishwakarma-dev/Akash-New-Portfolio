@@ -1,22 +1,24 @@
-import type { NextSeoProps } from "next-seo";
+import type { NextSeoProps } from "next-seo/pages";
+
+const SITE_URL = "https://akash-portfolio-b1529.web.app";
 
 const config: NextSeoProps = {
   defaultTitle: "Akash Vishwakarma | Full Stack Developer & AI Engineer",
   titleTemplate: "%s | Akash Vishwakarma",
   description:
     "Portfolio of Akash Vishwakarma - Full Stack Developer, AI/ML Engineer, and Open Source Contributor. Explore projects, blog posts, research, and achievements.",
-  canonical: "https://akash-portfolio-b1529.web.app/",
+  canonical: `${SITE_URL}/`,
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "https://akash-portfolio-b1529.web.app/",
+    url: `${SITE_URL}/`,
     siteName: "Akash Vishwakarma Portfolio",
     title: "Akash Vishwakarma | Full Stack Developer & AI Engineer",
     description:
       "Portfolio showcasing projects, blog posts, research papers, and professional achievements in software development and AI/ML.",
     images: [
       {
-        url: null,
+        url: `${SITE_URL}/favicon.ico`,
         width: 1200,
         height: 630,
         alt: "Akash Vishwakarma Portfolio",
@@ -79,11 +81,11 @@ export function getProjectSEO(project: {
   return {
     title: project.title,
     description: project.summary,
-    canonical: null,
+    canonical: `${SITE_URL}/projects/${project.slug}`,
     openGraph: {
       title: project.title,
       description: project.summary,
-      url: null,
+      url: `${SITE_URL}/projects/${project.slug}`,
       type: "article",
       images: project.coverImage
         ? [
@@ -113,11 +115,11 @@ export function getBlogSEO(post: {
   return {
     title: post.title,
     description: post.excerpt,
-    canonical: null,
+    canonical: `${SITE_URL}/blog/${post.slug}`,
     openGraph: {
       title: post.title,
       description: post.excerpt,
-      url: null,
+      url: `${SITE_URL}/blog/${post.slug}`,
       type: "article",
       article: {
         publishedTime: post.createdAt,

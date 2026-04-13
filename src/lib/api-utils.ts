@@ -28,7 +28,7 @@ export function successResponse<T>(data: T, meta?: ApiResponse["meta"]): NextRes
     {
       success: true,
       data,
-      ...(meta && { meta }),
+      ...(meta ? { meta } : {}),
     },
     { status: 200 }
   );
@@ -48,8 +48,8 @@ export function errorResponse(
       success: false,
       error: {
         message,
-        ...(code && { code }),
-        ...(details && { details }),
+        ...(code ? { code } : {}),
+        ...(details ? { details } : {}),
       },
     },
     { status }
