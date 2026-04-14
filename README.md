@@ -2,6 +2,9 @@
 
 A secure, scalable backend system for a professional developer portfolio platform built with Next.js 16, Prisma, MongoDB, and Cloudflare R2.
 
+## Checkout the Portfolio
+[Click here](https://akash-new-portfolio.vercel.app)
+
 ## 📋 Table of Contents
 
 - [Features](#features)
